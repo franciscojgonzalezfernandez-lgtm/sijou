@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobado (23-11-2026) |
+| Estado | Implementado (23-11-2026) |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-002-esqueleto-app` |
 | Entorno temporal | Cuenta Hobby del técnico hasta N-03 (ver "Desviación temporal") |
@@ -98,7 +98,7 @@ Decidido el 23-11-2026. Hasta que la clienta tenga el equipo Vercel Pro (N-03), 
 - Límites del plan gratuito de Neon (almacenamiento y número de ramas): se borran las ramas de los PR cerrados (job `neon-cleanup`).
 
 ## Dudas
-- **D-1 (resuelta):** los previews copian siempre de la rama `staging` con datos de prueba.
+- **D-1 (resuelta, pendiente de aplicar antes del lanzamiento):** los previews copian siempre de la rama `staging` con datos de prueba. Con la integración de Neon gestionada por Vercel, las ramas de preview salen de la rama por defecto y no se puede cambiar desde la CLI. Hoy no hay riesgo: producción solo tiene datos de prueba. Se configura al migrar al equipo de la clienta (N-03), antes de que haya datos reales.
 - **D-2 (resuelta):** en F-002 el seed crea solo la administradora de prueba, y cada feature lo amplía.
 
 ## Riesgos y alternativas

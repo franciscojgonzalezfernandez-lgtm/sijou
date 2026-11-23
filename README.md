@@ -2,7 +2,7 @@
 
 E-commerce for natural cosmetics. Trilingual storefront (EN · DE · ES), Spanish admin panel, prices in CHF.
 
-**Status:** F-001 (repository and quality gates) done. Next: F-002 (app skeleton).
+**Status:** F-001 (quality gates) and F-002 (app skeleton: Payload admin, Neon, Vercel) done. Next: F-003 (i18n).
 
 ## Documentation
 - [PRD](docs/PRD.md): functional and non-functional requirements (Spanish)
