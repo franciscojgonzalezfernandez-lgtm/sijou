@@ -5,7 +5,6 @@ export default function Home() {
       <p className="text-lg leading-relaxed">
         Natural cosmetics, coming soon. We are preparing our online shop.
       </p>
-      {/* eslint-disable-next-line jsx-a11y/control-has-associated-label -- canary */}
       <button type="button" />
     </main>
   );
