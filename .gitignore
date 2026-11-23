@@ -1,0 +1,27 @@
+# deps
+node_modules/
+.pnpm-store/
+
+# build
+.next/
+out/
+dist/
+build/
+.vercel/
+
+# env & secrets
+.env
+.env*.local
+.env.*
+!.env.example
+
+# testing
+coverage/
+playwright-report/
+test-results/
+.lighthouseci/
+
+# misc
+.DS_Store
+*.log
+.claude/settings.local.json
