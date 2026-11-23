@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (23-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RNF-11, RNF-15, RNF-16 |
 | Depende de | — |

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobado (23-11-2026) |
+| Estado | Implementado (23-11-2026) |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-001-repo-calidad` |
 
