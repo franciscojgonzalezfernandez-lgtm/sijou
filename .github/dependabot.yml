@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 10
+    cooldown:
+      default-days: 14
+    groups:
+      next-react:
+        patterns:
+          ["next", "react", "react-dom", "@types/react", "@types/react-dom", "eslint-config-next"]
+      testing:
+        patterns: ["vitest", "@vitest/*", "@playwright/test", "@axe-core/*", "@lhci/*"]
+      lint:
+        patterns:
+          ["eslint", "eslint-*", "typescript-eslint", "prettier", "prettier-*", "typescript"]
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    groups:
+      actions:
+        patterns: ["*"]

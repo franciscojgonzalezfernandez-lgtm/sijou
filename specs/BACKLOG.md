@@ -35,7 +35,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 
 | ID | Feature | PRD | Depende de | Prio | Estado |
 |---|---|---|---|---|---|
-| [F-001](./F-001-repo-calidad/spec.md) | **Repo y calidad**: TypeScript estricto, lint, formato, Vitest, Playwright + axe, CI en GitHub Actions, **Lighthouse CI con puerta ≥ 90 × 4** | RNF-11, RNF-15 | — | P0 | 📝 |
+| [F-001](./F-001-repo-calidad/spec.md) | **Repo y calidad**: TypeScript estricto, lint, formato, Vitest, Playwright + axe, CI en GitHub Actions, **Lighthouse CI con puerta ≥ 90 × 4** | RNF-11, RNF-15 | — | P0 | 📐 |
 | [F-002](./F-002-esqueleto-app/spec.md) | **Esqueleto de la app**: Next.js + Payload 3 + Neon (Frankfurt) + Vercel (fra1), ramas de Neon por preview, variables de entorno | ADR-02/03 | F-001, N-03 | P0 | 📝 |
 | [F-003](./F-003-i18n-base/spec.md) | **i18n base**: next-intl, rutas `/[locale]`, detección del idioma del navegador, EN por defecto, selector, mapa de slugs traducidos | RF-I18N | F-002 | P0 | 📝 |
 | [F-004](./F-004-sistema-diseno/spec.md) | **Sistema de diseño accesible**: tokens, paleta AA/AAA, tipografía, componentes base (botón, campo, diálogo, toast, skeleton) | RNF-03 | F-002, N-04 | P0 | 📝 |
