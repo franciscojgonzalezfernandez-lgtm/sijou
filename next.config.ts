@@ -1,4 +1,5 @@
 import { withPayload } from "@payloadcms/next/withPayload";
+import createNextIntlPlugin from "next-intl/plugin";
 import type { NextConfig } from "next";
 import {
   PHASE_DEVELOPMENT_SERVER,
@@ -7,6 +8,8 @@ import {
 } from "next/constants";
 
 import { serverEnv } from "./src/env";
+
+const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");
 
 const noindex = [{ key: "X-Robots-Tag", value: "noindex, nofollow" }];
 
@@ -40,5 +43,5 @@ const RUNTIME_PHASES = new Set([
 
 export default function config(phase: string): NextConfig {
   if (RUNTIME_PHASES.has(phase)) serverEnv();
-  return withPayload(nextConfig, { devBundleServerPackages: false });
+  return withPayload(withNextIntl(nextConfig), { devBundleServerPackages: false });
 }

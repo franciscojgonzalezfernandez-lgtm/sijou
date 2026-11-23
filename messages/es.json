@@ -1,0 +1,20 @@
+{
+  "Metadata": {
+    "title": "Sijou — Cosmética natural",
+    "description": "Cosmética natural de Sijou. Nuestra tienda online abre pronto, con productos hechos a mano y enviados desde Suiza."
+  },
+  "Home": {
+    "tagline": "Cosmética natural, muy pronto. Estamos preparando nuestra tienda online."
+  },
+  "LocaleSwitcher": {
+    "label": "Idioma",
+    "en": "English",
+    "de": "Deutsch",
+    "es": "Español"
+  },
+  "NotFound": {
+    "title": "Página no encontrada",
+    "description": "La página que buscas no existe o ha cambiado de dirección.",
+    "backHome": "Volver a la página de inicio"
+  }
+}

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (24-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RF-I18N-01…05, RF-SEO-03 |
 | Depende de | F-002 |

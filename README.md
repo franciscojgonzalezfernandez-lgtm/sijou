@@ -2,7 +2,7 @@
 
 E-commerce for natural cosmetics. Trilingual storefront (EN · DE · ES), Spanish admin panel, prices in CHF.
 
-**Status:** F-001 (quality gates) and F-002 (app skeleton: Payload admin, Neon, Vercel) done. Next: F-003 (i18n).
+**Status:** F-001 (quality gates), F-002 (app skeleton: Payload admin, Neon, Vercel) and F-003 (i18n: /en, /de, /es) done.
 
 ## Documentation
 - [PRD](docs/PRD.md): functional and non-functional requirements (Spanish)
@@ -19,7 +19,7 @@ docker compose up -d          # Postgres on localhost:54329
 cp .env.example .env.local    # then set PAYLOAD_SECRET and SEED_ADMIN_PASSWORD
 pnpm install
 pnpm migrate && pnpm seed     # schema + test administrator
-pnpm dev                      # shop at /, admin panel at /admin
+pnpm dev                      # shop at /en, /de, /es; admin panel at /admin
 ```
 
 | Command | What it does |

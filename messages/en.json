@@ -1,0 +1,20 @@
+{
+  "Metadata": {
+    "title": "Sijou — Natural cosmetics",
+    "description": "Sijou natural cosmetics. Our online shop is coming soon, with handmade products shipped from Switzerland."
+  },
+  "Home": {
+    "tagline": "Natural cosmetics, coming soon. We are preparing our online shop."
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "de": "Deutsch",
+    "es": "Español"
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist or has moved.",
+    "backHome": "Back to the home page"
+  }
+}
