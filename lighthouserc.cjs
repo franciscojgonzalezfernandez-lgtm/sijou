@@ -18,6 +18,8 @@ module.exports = {
         ...(bypass && {
           extraHeaders: JSON.stringify({
             "x-vercel-protection-bypass": bypass,
+            // Sets a bypass cookie so Lighthouse's own fetches (robots.txt) also get through.
+            "x-vercel-set-bypass-cookie": "true",
             "x-vercel-skip-toolbar": "1",
           }),
         }),
