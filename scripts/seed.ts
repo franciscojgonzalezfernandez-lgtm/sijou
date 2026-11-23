@@ -6,6 +6,11 @@ import { getPayload } from "payload";
 
 import config from "../src/payload.config";
 
+// Test data must never reach production: previews seed their own Neon branch (F-002 CA-2).
+if (process.env.VERCEL_ENV === "production") {
+  throw new Error("Refusing to seed: VERCEL_ENV is production.");
+}
+
 const email = process.env.SEED_ADMIN_EMAIL;
 const password = process.env.SEED_ADMIN_PASSWORD;
 if (!email || !password) {
