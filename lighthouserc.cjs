@@ -1,6 +1,6 @@
 // F-001 CA-5 / constitution I: every category >= 0.90 on the mobile profile, median of 3 runs.
-// Locally (and without LHCI_URL) it starts `next start`; in CI it audits the Vercel preview (F-002).
-const url = process.env.LHCI_URL;
+// Locally (and without LH_BASE_URL) it starts `next start`; in CI it audits the Vercel preview (F-002).
+const url = process.env.LH_BASE_URL;
 // Constitution I: every locale is audited.
 const LOCALES = ["en", "de", "es"];
 const urlsFor = (base) => LOCALES.map((l) => new URL(`/${l}`, base).toString());
