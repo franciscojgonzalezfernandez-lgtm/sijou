@@ -14,12 +14,27 @@
     "test:e2e": "next build && playwright test",
     "lh": "next build && lhci autorun",
     "check": "pnpm format:check && pnpm lint && pnpm typecheck && pnpm test:unit --coverage",
-    "fix": "prettier --write . && eslint --fix ."
+    "fix": "prettier --write . && eslint --fix .",
+    "payload": "payload",
+    "migrate": "payload migrate",
+    "migrate:create": "payload migrate:create",
+    "generate": "payload generate:types && payload generate:importmap",
+    "seed": "tsx --env-file-if-exists=.env.local scripts/seed.ts",
+    "vercel-build": "sh scripts/vercel-build.sh"
   },
   "dependencies": {
+    "@payloadcms/db-postgres": "3.93.0",
+    "@payloadcms/next": "3.93.0",
+    "@payloadcms/richtext-lexical": "3.93.0",
+    "@payloadcms/translations": "3.93.0",
+    "@payloadcms/ui": "3.93.0",
+    "graphql": "^16.15.0",
     "next": "16.4.5",
+    "payload": "3.93.0",
     "react": "19.3.0",
-    "react-dom": "19.3.0"
+    "react-dom": "19.3.0",
+    "sharp": "^0.35.5",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
@@ -36,12 +51,14 @@
     "prettier": "^3.9.10",
     "prettier-plugin-tailwindcss": "^0.8.1",
     "tailwindcss": "^4.3.5",
+    "tsx": "^4.23.15",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.72.2",
     "vitest": "^5.1.0"
   },
   "packageManager": "pnpm@12.18.0",
   "engines": {
-    "node": ">=24"
-  }
+    "node": "24.x"
+  },
+  "type": "module"
 }

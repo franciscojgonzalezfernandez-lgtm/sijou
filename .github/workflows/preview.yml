@@ -1,0 +1,94 @@
+# F-002: E2E and Lighthouse run against the real Vercel deployment (preview for PRs, production on main).
+# The job names match the required checks on `main` (e2e, lighthouse).
+name: Deployment checks
+
+on:
+  deployment_status:
+
+concurrency:
+  group: deploy-checks-${{ github.event.deployment.sha }}-${{ github.event.deployment.environment }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  BASE_URL: ${{ github.event.deployment_status.target_url }}
+  VERCEL_AUTOMATION_BYPASS_SECRET: ${{ secrets.VERCEL_AUTOMATION_BYPASS_SECRET }}
+
+jobs:
+  e2e:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - name: Cache Playwright browsers
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('pnpm-lock.yaml') }}
+      - run: sudo apt-get update
+      - run: pnpm exec playwright install --with-deps chromium webkit
+      - run: pnpm exec playwright test
+      - if: failure()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+
+  lighthouse:
+    if: github.event.deployment_status.state == 'success'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+      pull-requests: write
+    env:
+      LHCI_URL: ${{ github.event.deployment_status.target_url }}
+      LHCI_PREVIEW: ${{ github.event.deployment.environment != 'Production' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.deployment.sha }}
+      - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version-file: .nvmrc
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec lhci autorun
+      - name: Comment report links on the PR
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.deployment.sha }}
+        run: |
+          [ -f .lighthouseci/links.json ] || exit 0
+          PR=$(gh api "repos/${GITHUB_REPOSITORY}/commits/${SHA}/pulls" --jq '.[0].number // empty')
+          [ -n "$PR" ] || exit 0
+          {
+            echo "### Lighthouse (mobile, median of 3 runs) — ${{ github.event.deployment.environment }}"
+            node -e '
+              const fs = require("fs");
+              const links = require("./.lighthouseci/links.json");
+              const lhrs = fs.readdirSync(".lighthouseci").filter(f => f.startsWith("lhr-") && f.endsWith(".json"))
+                .map(f => require("./.lighthouseci/" + f));
+              for (const [url, report] of Object.entries(links)) {
+                const runs = lhrs.filter(l => l.requestedUrl === url);
+                const med = k => { const v = runs.map(r => r.categories[k].score * 100).sort((a,b)=>a-b); return Math.round(v[Math.floor(v.length/2)]); };
+                console.log(`- Perf ${med("performance")} · A11y ${med("accessibility")} · BP ${med("best-practices")} · SEO ${med("seo")} — [report](${report})`);
+              }'
+          } > lh-comment.md
+          gh pr comment "$PR" --body-file lh-comment.md --edit-last --create-if-none

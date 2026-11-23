@@ -24,7 +24,9 @@ src/
   env.ts                                 # esquema y validación de variables (CA-6)
   migrations/                            # migraciones versionadas de Payload (CA-5)
 scripts/seed.ts                          # datos de prueba (CA-7)
-vercel.ts                                # regiones, comando de build
+vercel.json                              # región fra1
+scripts/vercel-build.sh                  # migraciones (+ seed en previews) y build
+docker-compose.yml                       # Postgres local (puerto 54329)
 .env.example
 ```
 Cada grupo de rutas tiene su propio layout raíz: el CSS y el JavaScript del panel nunca llegan a la tienda, lo que protege la puerta de Lighthouse.
@@ -38,8 +40,8 @@ Cada grupo de rutas tiene su propio layout raíz: el CSS y el JavaScript del pan
 | Contratación de Neon | Integración nativa de Neon desde el Marketplace de Vercel, en el equipo de la clienta, región `aws-eu-central-1` | Facturación unificada, variables de entorno automáticas y ramas por preview gestionadas por Vercel (CA-2) |
 | Origen de las ramas de preview | Siempre una rama `staging` de Neon con datos de prueba, nunca producción (D-1, decidido) | Ningún preview copia datos personales reales (nLPD) |
 | Borrado de ramas | Las borra la integración al eliminar el deploy de preview. Además, un job de GitHub Actions en `pull_request: closed` borra la rama por la API de Neon, para cumplir "al cerrar el PR" | CA-2 |
-| Región | `regions: ["fra1"]` en `vercel.ts` | CA-3, ADR-02 |
-| Migraciones | `payload migrate && next build` como comando de build en Vercel. Las migraciones se generan con `payload migrate:create` y se versionan en `src/migrations/`. Nunca `push` fuera del desarrollo local | CA-5: si una migración falla, el build falla y producción sigue igual |
+| Región | `regions: ["fra1"]` en `vercel.json` y región por defecto del proyecto en `fra1`. Se usa `vercel.json` en vez de `vercel.ts` para no añadir `@vercel/config` por una sola clave | CA-3, ADR-02 |
+| Migraciones | Script `vercel-build` (`scripts/vercel-build.sh`): `payload migrate` con la conexión directa (sin pooler), seed solo en previews, y `next build`. Las migraciones se generan con `payload migrate:create` y se versionan en `src/migrations/`. Nunca `push` fuera del desarrollo local | CA-5: si una migración falla, el build falla y producción sigue igual |
 | Autenticación del panel | La de Payload (colección `users`, solo administradoras) | ADR-04 deja la unificación con Better Auth para la prueba de concepto de F-007. No se adelanta trabajo |
 | Idioma del panel | `i18n: { supportedLanguages: { es }, fallbackLanguage: "es" }` | CA-4 |
 | Indexación | `robots.ts` con `Disallow: /admin` y `/api`; `X-Robots-Tag: noindex` en `/admin` y `/api` (cabecera en `next.config.ts`) | CA-8 |

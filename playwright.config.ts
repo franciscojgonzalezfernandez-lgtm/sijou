@@ -11,6 +11,13 @@ export default defineConfig({
   reporter: process.env.CI ? [["github"], ["html", { open: "never" }]] : [["list"]],
   use: {
     baseURL,
+    // Against Vercel previews: pass deployment protection and hide the Vercel toolbar.
+    extraHTTPHeaders: process.env.VERCEL_AUTOMATION_BYPASS_SECRET
+      ? {
+          "x-vercel-protection-bypass": process.env.VERCEL_AUTOMATION_BYPASS_SECRET,
+          "x-vercel-skip-toolbar": "1",
+        }
+      : {},
     trace: "retain-on-failure",
     video: "retain-on-failure",
   },

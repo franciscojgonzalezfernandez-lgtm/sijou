@@ -10,12 +10,13 @@ export default defineConfig({
     environment: "node",
     coverage: {
       provider: "v8",
-      include: ["src/domain/**/*.{ts,tsx}", "src/lib/**/*.{ts,tsx}"],
+      include: ["src/domain/**/*.{ts,tsx}", "src/lib/**/*.{ts,tsx}", "src/env.ts"],
       exclude: ["**/*.test.{ts,tsx}"],
       reporter: ["text", "json-summary", "html"],
       thresholds: {
         // Constitution V: critical domain logic needs 100 % branch coverage.
         "src/domain/**": { branches: 100, functions: 100, lines: 100, statements: 100 },
+        "src/env.ts": { branches: 100, functions: 100, lines: 100, statements: 100 },
       },
     },
   },

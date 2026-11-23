@@ -22,7 +22,13 @@ const eslintConfig = defineConfig([
     languageOptions: {
       parserOptions: { projectService: true, tsconfigRootDir: import.meta.dirname },
     },
-    rules: typeCheckedRules,
+    rules: {
+      ...typeCheckedRules,
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        { argsIgnorePattern: "^_", varsIgnorePattern: "^_", ignoreRestSiblings: true },
+      ],
+    },
   },
   {
     // Constitution II + F-001 CA-4: every E2E navigation must go through visit(), which runs axe.
@@ -49,6 +55,9 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "*.config.{js,cjs,mjs}",
     "lighthouserc.cjs",
+    "src/payload-types.ts",
+    "src/migrations/**",
+    "src/app/(payload)/**",
   ]),
 ]);
 
