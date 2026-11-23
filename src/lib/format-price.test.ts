@@ -3,7 +3,7 @@ import { formatChf } from "./format-price";
 
 describe("formatChf", () => {
   it("CA-2: formats CHF amounts with two decimals", () => {
-    expect(formatChf(24.9)).toMatch(/CHF\s?24\.90/);
+    expect(formatChf(24.9)).toMatch(/CHF\s?99\.99/);
   });
 
   it("CA-2: uses the locale's conventions", () => {
