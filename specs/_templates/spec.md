@@ -16,6 +16,10 @@ Por qué existe esta feature y qué problema resuelve.
 ## Criterios de aceptación
 - **CA-1** Dado …, cuando …, entonces ….
 
+## Estrategia de pruebas
+- Unitarias: …
+- E2E: …
+
 ## Casos límite y errores
 - …
 

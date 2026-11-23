@@ -7,7 +7,8 @@
 - One branch and one PR per feature: `feat/F-XXX-slug`.
 
 ## Non-negotiables
-- Lighthouse (mobile) **100** in Performance, Accessibility, Best Practices and SEO on every public template and every locale.
+- Lighthouse (mobile) **≥ 90** (target 100) in Performance, Accessibility, Best Practices and SEO on every public template and every locale.
+- Every feature ships with unit tests (Vitest) and E2E tests (Playwright) covering its acceptance criteria.
 - WCAG 2.2 AA minimum. No axe violations.
 - No hardcoded user-facing strings: use next-intl messages or the database (es, en, de).
 - Stock changes only inside DB transactions, and every change writes a `stock_movement` row. Stripe webhooks are idempotent and signature-verified.

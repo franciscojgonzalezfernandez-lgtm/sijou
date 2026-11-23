@@ -14,11 +14,11 @@ Colecciones o tablas y campos nuevos o modificados. Migraciones necesarias.
 Cada una con su justificación y su impacto en el tamaño del bundle.
 
 ## Comprobación de la constitución
-- [ ] I. Lighthouse 100 × 4 (y cómo se mide)
+- [ ] I. Lighthouse ≥ 90 × 4 (y cómo se mide)
 - [ ] II. Accesibilidad AA
 - [ ] III. SEO e i18n
 - [ ] IV. Integridad del dominio
-- [ ] V. Pruebas
+- [ ] V. Pruebas unitarias + E2E
 - [ ] VI. Seguridad y privacidad
 - [ ] VII. Simplicidad
 
