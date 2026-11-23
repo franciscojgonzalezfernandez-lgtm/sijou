@@ -2,7 +2,7 @@
 
 E-commerce for natural cosmetics. Trilingual storefront (EN · DE · ES), Spanish admin panel, prices in CHF.
 
-**Status:** F-001 (repository and quality gates) done. Next: F-002 (app skeleton).
+**Status:** F-001 (quality gates) and F-002 (app skeleton: Payload admin, Neon, Vercel) done. Next: F-003 (i18n).
 
 ## Documentation
 - [PRD](docs/PRD.md): functional and non-functional requirements (Spanish)
@@ -12,7 +12,15 @@ E-commerce for natural cosmetics. Trilingual storefront (EN · DE · ES), Spanis
 - [SDD workflow](specs/README.md): spec → plan → tasks → implement → verify
 
 ## Development
-Requirements: Node.js 24 (`.nvmrc`) and pnpm via Corepack (`corepack enable`).
+Requirements: Node.js 24 (`.nvmrc`), pnpm via Corepack (`corepack enable`) and Docker (local Postgres).
+
+```bash
+docker compose up -d          # Postgres on localhost:54329
+cp .env.example .env.local    # then set PAYLOAD_SECRET and SEED_ADMIN_PASSWORD
+pnpm install
+pnpm migrate && pnpm seed     # schema + test administrator
+pnpm dev                      # shop at /, admin panel at /admin
+```
 
 | Command | What it does |
 |---|---|
@@ -22,8 +30,10 @@ Requirements: Node.js 24 (`.nvmrc`) and pnpm via Corepack (`corepack enable`).
 | `pnpm test:e2e` | Production build + Playwright (mobile Chrome, mobile Safari, desktop Chrome) with axe |
 | `pnpm lh` | Production build + Lighthouse CI (mobile, median of 3 runs, every category ≥ 90) |
 | `pnpm fix` | Prettier + `eslint --fix` |
+| `pnpm migrate:create <name>` | New versioned Payload migration (never schema push outside local dev) |
+| `pnpm generate` | Regenerate Payload types and the admin import map |
 
-CI runs the same gates on every PR (`quality`, `secrets`, `e2e`, `lighthouse`); all four are required to merge into `main`. Repository settings: [docs/github-setup.md](docs/github-setup.md).
+CI runs `quality` and `secrets` on every PR, and `e2e` and `lighthouse` against the PR's Vercel preview (and production after merging); all four are required to merge into `main`. Repository settings: [docs/github-setup.md](docs/github-setup.md).
 
 ## Planned stack
 Next.js (App Router) · Payload CMS 3 · Neon Postgres (Frankfurt) · Better Auth · Stripe Checkout (TWINT, cards, wallets) · Vercel Blob · Resend · Sentry · Vercel (fra1)

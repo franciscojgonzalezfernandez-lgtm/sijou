@@ -1,5 +1,5 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type Page } from "@playwright/test";
+import { expect, type Locator, type Page } from "@playwright/test";
 
 export { expect, test } from "@playwright/test";
 
@@ -10,10 +10,22 @@ const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
  * Navigates to `url` and fails the test on any axe violation (F-001 CA-4).
  * All E2E navigation must go through this helper; ESLint forbids page.goto elsewhere.
  */
-export async function visit(page: Page, url: string): Promise<void> {
+export async function visit(
+  page: Page,
+  url: string,
+  options: {
+    /** Element that proves the page has settled (client redirects, hydration) before auditing. */
+    ready?: (page: Page) => Locator;
+  } = {},
+): Promise<void> {
   const response = await page.goto(url);
   expect(response?.ok(), `GET ${url} returned ${response?.status()}`).toBe(true);
   await page.waitForLoadState("load");
+  if (options.ready) await options.ready(page).waitFor();
+  // Audit the settled page: mid-fade elements report false colour-contrast failures.
+  await page.evaluate(() =>
+    Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => null))),
+  );
   const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
   expect(
     violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`),

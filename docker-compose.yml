@@ -1,0 +1,16 @@
+# Local development database (F-002). Port 54329 avoids clashing with other local Postgres instances.
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    ports:
+      - "54329:5432"
+    environment:
+      POSTGRES_USER: sijou
+      POSTGRES_PASSWORD: sijou
+      POSTGRES_DB: sijou
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:

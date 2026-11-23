@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (23-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RNF-05, RNF-06, RNF-07; ADR-02, ADR-03 |
 | Depende de | F-001, N-03 |
