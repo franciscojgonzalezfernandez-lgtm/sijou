@@ -1,0 +1,20 @@
+{
+  "Metadata": {
+    "title": "Sijou — Naturkosmetik",
+    "description": "Naturkosmetik von Sijou. Unser Onlineshop öffnet bald, mit handgemachten Produkten aus der Schweiz."
+  },
+  "Home": {
+    "tagline": "Naturkosmetik, bald online. Wir bereiten unseren Onlineshop vor."
+  },
+  "LocaleSwitcher": {
+    "label": "Sprache",
+    "en": "English",
+    "de": "Deutsch",
+    "es": "Español"
+  },
+  "NotFound": {
+    "title": "Seite nicht gefunden",
+    "description": "Die gesuchte Seite existiert nicht oder wurde verschoben.",
+    "backHome": "Zur Startseite"
+  }
+}

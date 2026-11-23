@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Borrador (pendiente de aprobación) |
+| Estado | Implementado (24-11-2026) |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-003-i18n-base` |
 
@@ -43,11 +43,11 @@ scripts/check-messages.ts                # o prueba unitaria: claves y variables
 | Slugs traducidos | Rutas fijas: `pathnames` de next-intl (p. ej. `/es/sobre-nosotros`). Rutas dinámicas (productos, categorías, blog): cada página declara sus URLs alternativas con `alternates.ts`, a partir de los slugs de la base de datos (F-010 en adelante). El selector usa esas mismas URLs | CA-4, RF-I18N-03 |
 | hreflang y canonical | `buildAlternates(locale, urlsByLocale)` devuelve `alternates.canonical` y `alternates.languages` (`en`, `de`, `es` y `x-default` → EN), en URLs absolutas con `metadataBase` = `NEXT_PUBLIC_SITE_URL` | CA-5, RF-SEO-03 |
 | `lang` | El layout raíz de `(frontend)/[locale]` pinta `<html lang={locale}>` | CA-6 |
-| Idioma no soportado | `generateStaticParams` + `dynamicParams = false` en `[locale]`: `/fr` da 404. Una ruta sin prefijo (`/fr/x`) se redirige a `/en/fr/x`, que da 404 en inglés | Casos límite de la spec |
+| Idioma no soportado | `generateStaticParams` en `[locale]` y `notFound()` en el layout si el idioma no es válido (`dynamicParams` no es compatible con Cache Components): `/fr` da 404. Una ruta sin prefijo (`/fr/x`) se redirige a `/en/fr/x`, que da 404 en inglés | Casos límite de la spec |
 | Mensajes | JSON por idioma con espacios de nombres por pantalla. Tipos de las claves a partir de `en.json` (un error de tipos si se usa una clave que no existe) | CA-7 |
 | Comprobación de mensajes | Prueba unitaria que compara las claves y las variables ICU de los 3 idiomas. Se ejecuta en `pnpm check` y, por tanto, en el job `quality` | CA-7: si falta una clave, CI falla |
 | Formatos | Precio: `Intl.NumberFormat("<idioma>-CH", { currency: "CHF" })`. Fechas: formatos con nombre (`short`, `long`) en `formats.ts`. Ver la duda D-1 sobre el formato del precio en español | CA-8 |
-| Cache Components | El idioma se lee con `next/root-params` (lo que recomienda next-intl 4.14), no con `setRequestLocale`. Las páginas siguen siendo estáticas por idioma | Rendimiento (constitución I) |
+| Cache Components | El idioma se lee con `next/root-params` (lo que recomienda next-intl 4.14), no con `setRequestLocale`. Las páginas siguen siendo estáticas por idioma. `next typegen` no detecta el parámetro con dos layouts raíz, así que `src/i18n/root-locale.ts` le da tipo | Rendimiento (constitución I) |
 | Proxy | `matcher` que excluye `/admin`, `/api`, `/_next`, `/_vercel` y los archivos con extensión (`robots.txt`, `favicon.ico`…) | El panel sigue en español sin prefijo (RF-I18N-05) |
 | `robots.txt` y metadatos de raíz | Siguen fuera de `[locale]` | Son únicos para todo el sitio |
 
@@ -81,7 +81,7 @@ scripts/check-messages.ts                # o prueba unitaria: claves y variables
 - [x] **VII. Simplicidad:** una sola librería, sin JavaScript para el selector.
 
 ## Dudas
-- **D-1:** formato del precio en español. Con las reglas de cada idioma, `es-CH` da `1234,50 CHF`, mientras que `en-CH` y `de-CH` dan `CHF 1'234.50` (el ejemplo de la spec, `CHF 24.90`, es el formato suizo). Propuesta: **respetar el idioma** (`24,90 CHF` en español), que es lo que pide CA-8 ("se adaptan al idioma"). Alternativa: formato suizo en los 3 idiomas.
+- **D-1 (resuelta: se respeta el idioma):** formato del precio en español. Con las reglas de cada idioma, `es-CH` da `1234,50 CHF`, mientras que `en-CH` y `de-CH` dan `CHF 1'234.50` (el ejemplo de la spec, `CHF 24.90`, es el formato suizo). Propuesta: **respetar el idioma** (`24,90 CHF` en español), que es lo que pide CA-8 ("se adaptan al idioma"). Alternativa: formato suizo en los 3 idiomas.
 
 ## Riesgos y alternativas
 | Riesgo | Mitigación |
