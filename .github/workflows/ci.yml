@@ -19,6 +19,11 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 10
+    # Placeholders so `next typegen` can load the config; nothing here connects anywhere.
+    env:
+      DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
+      PAYLOAD_SECRET: ci-placeholder-not-a-secret-000000000000
+      NEXT_PUBLIC_SITE_URL: http://localhost:3000
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
       - uses: pnpm/action-setup@73e46992e05b19abd31f2f3c20e0e7370d762115 # v6.1.1
