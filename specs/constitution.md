@@ -2,12 +2,11 @@
 
 Reglas que **ninguna feature puede saltarse**. Cada `plan.md` debe declarar que las cumple, o justificar por escrito cualquier excepción. Una excepción necesita la aprobación explícita del responsable técnico.
 
-## I. Calidad web: Lighthouse 100 × 4
-- **Rendimiento, Accesibilidad, Buenas prácticas y SEO = 100** en Lighthouse, con el perfil móvil, en todas las plantillas públicas y en los 3 idiomas.
-- Lo verifica **Lighthouse CI** sobre el deploy de preview de cada PR. Si una puntuación baja de 100, el PR no se puede fusionar.
+## I. Calidad web: Lighthouse ≥ 90 × 4
+- **Rendimiento, Accesibilidad, Buenas prácticas y SEO ≥ 90** en Lighthouse (el objetivo es 100), con el perfil móvil, en todas las plantillas públicas y en los 3 idiomas.
+- Lo verifica **Lighthouse CI** sobre el deploy de preview de cada PR. Si una puntuación baja de 90, el PR no se puede fusionar. Si una página baja de 100, el PR explica por qué.
 - Presupuestos (p75, móvil): LCP < 2,5 s, INP < 200 ms, CLS < 0,1. JavaScript inicial por ruta pública < 100 kB gzip.
 - **Ninguna librería de terceros en la parte pública** sin justificarlo en el plan y medirlo antes y después.
-- **Excepción conocida:** la página de checkout incluye el iframe de Stripe. Si este impide llegar a 100, se documenta, y no se pierde puntuación por nada propio.
 
 ## II. Accesibilidad
 - Mínimo WCAG 2.2 AA, con contraste AAA en texto siempre que se pueda.
@@ -24,9 +23,11 @@ Reglas que **ninguna feature puede saltarse**. Cada `plan.md` debe declarar que 
 - **El dinero solo se mueve a través de Stripe.** Los webhooks son idempotentes y se verifica su firma.
 - Los precios y los totales se calculan siempre en el servidor. Lo que envía el cliente nunca se da por bueno.
 
-## V. Pruebas
-- La lógica de dominio (stock, FEFO, reservas, promociones, envío) tiene pruebas unitarias **antes** de darse por terminada.
-- Cada criterio de aceptación de una spec tiene al menos una prueba automática (unitaria, de integración o E2E) que apunta a su ID.
+## V. Pruebas (obligatorias en cada feature)
+- **Pruebas unitarias (Vitest)** de toda la lógica de dominio y de las utilidades. La lógica crítica (stock, FEFO, reservas, promociones, envío, cálculo de totales) se cubre al 100 % de ramas.
+- **Pruebas E2E (Playwright)** del recorrido de cada historia de usuario, en móvil y escritorio, con axe en cada página visitada.
+- Cada criterio de aceptación tiene al menos una prueba que cita su ID (`CA-n`). Sin pruebas no hay merge.
+- Los servicios externos se sustituyen en las pruebas: Stripe en modo test con Stripe CLI para los webhooks, y emails capturados por un transporte de prueba.
 
 ## VI. Seguridad y privacidad
 - Secretos solo en variables de entorno. Nunca se suben al repositorio, que es público.

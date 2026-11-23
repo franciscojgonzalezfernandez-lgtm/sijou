@@ -26,7 +26,7 @@ Tienda online propia para vender cosmética y productos naturales a particulares
 | Viabilidad comercial | Facturación mensual | > 300 CHF/mes |
 | Rendimiento | Core Web Vitals (p75, móvil) | LCP < 2,5 s · INP < 200 ms · CLS < 0,1 |
 | Accesibilidad | WCAG 2.2 AA | 100 % de cumplimiento AA |
-| Calidad web | Lighthouse (móvil): Rendimiento, Accesibilidad, Buenas prácticas, SEO | **100 en las 4 categorías**, en todas las plantillas públicas |
+| Calidad web | Lighthouse (móvil): Rendimiento, Accesibilidad, Buenas prácticas, SEO | **≥ 90 en las 4 categorías** (objetivo 100), en todas las plantillas públicas |
 | SEO | Páginas indexadas en los 3 idiomas | 100 % de productos, categorías y artículos publicados |
 | Autonomía | Altas, bajas y cambios de catálogo sin programador | 100 % |
 
@@ -83,11 +83,12 @@ Formato: `ID — Requisito`, seguido de los criterios de aceptación (CA) cuando
 - **RF-STK-06 — Historial de movimientos.** Todo cambio de stock (venta, ajuste manual, caducidad, reembolso, cambio de producto) queda registrado con fecha, cantidad, motivo, lote y autor (usuario o "sistema").
 - **RF-STK-07 — Alerta de stock bajo.** Hay un umbral general configurable. Cuando una variante baja de ese umbral, se envía un email al administrador, una sola vez hasta que el stock se recupere.
 - **RF-STK-08 — Un único almacén.**
+- **RF-STK-09 — Ofertas por caducidad.** Los lotes próximos a caducar pasan a la sección "Ofertas" (ver F-014).
 
 ### 5.3 Reservas con pago anticipado (RF-RES) — P1
 
 - **RF-RES-01 — Productos que se pueden reservar.** Solo los productos reponibles sin stock que tengan configurada una **fecha máxima de reposición**.
-- **RF-RES-02 — Pago completo.** El cliente paga el 100 % al reservar, sin límite de unidades. *Ver TA-07: ¿hace falta cuenta?*
+- **RF-RES-02 — Pago completo.** El cliente paga el 100 % al reservar, sin límite de unidades. Hace falta una cuenta verificada, y se avisa al usuario si intenta reservar sin ella (TA-07).
 - **RF-RES-03 — Carrito mixto.** Un carrito puede llevar productos en stock y reservados. Se paga todo en una sola vez. Lo que hay en stock se envía primero. El segundo envío (lo reservado) lo paga la tienda, y el checkout lo indica como ventaja ("el envío del resto corre de nuestra cuenta").
 - **RF-RES-04 — Asignación por orden de llegada.** Cuando entra un lote, las unidades se asignan primero a las reservas, de la más antigua a la más reciente. Los pedidos asignados pasan a "En preparación" y se avisa al cliente.
 - **RF-RES-05 — Sin cancelación antes del plazo.** El cliente no puede cancelar mientras no se haya superado la fecha máxima.
@@ -125,6 +126,7 @@ Formato: `ID — Requisito`, seguido de los criterios de aceptación (CA) cuando
 - **RF-CHK-05 — Confirmación.** Página y email de confirmación en el idioma del cliente. El pedido solo se crea tras confirmarse el pago, así que no hay estado "pendiente de pago". Los métodos de pago lentos (si se activan) quedan en espera hasta que se confirme el pago.
 - **RF-CHK-06 — Promociones (MVP).** Desde el panel, el administrador crea promociones automáticas: porcentaje o importe fijo sobre productos, categorías o colecciones, con fechas de inicio y fin. Se muestran el precio tachado y el precio final.
 - **RF-CHK-07 — Códigos de descuento (post-MVP).** El modelo de datos se diseña desde el MVP para admitir códigos (tipo, valor, alcance, límite de usos, caducidad, primera compra). Ni el panel ni el checkout los usan todavía. *Ver TA-10.*
+- **RF-CHK-09 — Saldo a favor.** Los clientes pueden tener saldo a favor (p. ej. cuando una edición abarata el pedido), que se aplica en su siguiente compra. Ver F-045.
 - **RF-CHK-08 — Sin factura en el MVP.** El cliente recibe el email de confirmación y el recibo de Stripe. *Ver TA-03.*
 
 ### 5.8 Pedidos (RF-PED)
@@ -132,7 +134,7 @@ Formato: `ID — Requisito`, seguido de los criterios de aceptación (CA) cuando
 - **RF-PED-01 — Estados:** `Pagado` → `Reservado / esperando stock` → `En preparación` → `Enviado` → `Entregado`. Estados finales alternativos: `Cancelado`, `Reembolsado`, `Cambio / devolución`.
 - **RF-PED-02 — Envíos.** Un pedido puede tener varios envíos (p. ej. un carrito mixto). Para cada envío, el administrador indica el transportista, el número de seguimiento y el enlace de seguimiento.
 - **RF-PED-03 — Emails al cliente:** confirmación de pedido, enviado (con seguimiento), entregado (con petición de opinión, ver TA-12), reserva confirmada, reserva asignada, fecha máxima superada, reembolso.
-- **RF-PED-04 — Edición antes del envío.** Mientras el pedido no se ha enviado, el administrador puede cambiar la dirección y añadir, quitar o sustituir productos. El stock se recalcula. *Ver TA-05 sobre el cobro o reembolso de la diferencia.*
+- **RF-PED-04 — Edición antes del envío.** Mientras el pedido no se ha enviado, el administrador puede cambiar la dirección y añadir, quitar o sustituir productos. El stock se recalcula. Si el importe sube, se cobra la diferencia con Stripe. Si baja, se abona como saldo a favor (TA-05).
 - **RF-PED-05 — Reembolsos** totales y parciales desde el panel, a través de Stripe, con opción de devolver las unidades al stock. *Propuesta pendiente de validar.*
 - **RF-PED-06 — Cambios.** El cliente devuelve el producto y la tienda envía uno nuevo. La tienda paga el envío de vuelta del cliente. El panel registra el cambio, el motivo y el nuevo envío, y descuenta el stock del producto de sustitución.
 - **RF-PED-07 — Herramientas del panel:** listado filtrable por estado, fecha y cliente; notas internas; exportación a CSV.
@@ -184,7 +186,7 @@ Formato: `ID — Requisito`, seguido de los criterios de aceptación (CA) cuando
 |---|---|
 | RNF-01 Rendimiento | Core Web Vitals "buenos" en el percentil 75 en móvil (LCP < 2,5 s, INP < 200 ms, CLS < 0,1). SSR y caché en el CDN. Imágenes optimizadas. |
 | RNF-02 Mobile-first | El 80 % del tráfico esperado viene del móvil. Se diseña y prueba primero en móvil. |
-| RNF-03 Accesibilidad | Mínimo WCAG 2.2 AA, con contraste AAA donde sea viable. Lighthouse Accesibilidad = 100. Navegación completa con teclado y lector de pantalla. La paleta se define en la fase de diseño. |
+| RNF-03 Accesibilidad | Mínimo WCAG 2.2 AA, con contraste AAA donde sea viable. Lighthouse Accesibilidad ≥ 90 (objetivo 100). Navegación completa con teclado y lector de pantalla. La paleta se define en la fase de diseño. |
 | RNF-04 Compatibilidad | Navegadores que cubran al menos el 95 % del uso global (lista de navegadores definida en la arquitectura). |
 | RNF-05 Disponibilidad | Objetivo del 99,9 %, delegado en Vercel y Neon. *No es realista prometer 0 s de caída: el límite real lo ponen los acuerdos de servicio de los proveedores, incluida Stripe.* |
 | RNF-06 Residencia de datos | Base de datos en Neon Frankfurt (UE) y funciones en Vercel fra1. Neon no tiene región en Suiza. La nLPD considera la UE un destino adecuado, y debe indicarse en la política de privacidad. Ver ARCHITECTURE.md, ADR-02. |
@@ -195,7 +197,8 @@ Formato: `ID — Requisito`, seguido de los criterios de aceptación (CA) cuando
 | RNF-11 Mantenibilidad | Lo mantiene un único ingeniero sénior. Código tipado, pruebas automáticas de los flujos críticos (checkout, webhook de pago, stock, reservas), CI/CD y entornos de preview. |
 | RNF-12 Observabilidad | Registro de errores, alertas por fallos de webhooks o emails, y registro de emails enviados. |
 | RNF-13 Emails | Proveedor transaccional con dominio autenticado (SPF, DKIM, DMARC). Plantillas en los 3 idiomas, accesibles y adaptadas al móvil. |
-| RNF-15 Lighthouse | 100 en Rendimiento, Accesibilidad, Buenas prácticas y SEO (perfil móvil) en todas las plantillas públicas, verificado en CI en cada PR. El checkout depende del iframe de Stripe: si este impide llegar a 100, la desviación se documenta y no se pierde puntuación por nada propio. |
+| RNF-15 Lighthouse | Mínimo 90 (objetivo 100) en Rendimiento, Accesibilidad, Buenas prácticas y SEO (perfil móvil) en todas las plantillas públicas, verificado en CI en cada PR. |
+| RNF-16 Pruebas | Cada feature incluye pruebas unitarias (Vitest) y E2E (Playwright) que cubren sus criterios de aceptación, y se ejecutan en CI en cada PR. |
 | RNF-14 Usabilidad del panel | Una persona sin perfil técnico debe poder publicar un producto con variantes y fotos en menos de 10 minutos. |
 
 ---
@@ -241,19 +244,34 @@ Entidades principales, para guiar la fase de arquitectura:
 | TA-02 | Empresas: ¿precios distintos? ¿Exentas de IVA? ¿Factura obligatoria? | RF-CLI-04 |
 | TA-03 | Facturas: ¿confirmamos que no habrá ninguna, ni para empresas? | RF-CHK-08 |
 | TA-04 | Reembolsos totales y parciales desde el panel: ¿aceptamos la propuesta? | RF-PED-05 |
-| TA-05 | Al editar un pedido, si el importe cambia: ¿se cobra o reembolsa la diferencia? ¿Cómo? | RF-PED-04 |
+| TA-05 | ✅ Resuelto: si sube, se cobra la diferencia con un enlace de pago de Stripe; si baja, se abona como saldo a favor (F-045) | RF-PED-04 |
 | TA-06 | Packaging: ¿tiene precio? ¿Stock propio? ¿Uno solo por pedido? | RF-CAT-08 |
-| TA-07 | ¿Las reservas exigen cuenta (para gestionar la elección esperar/cancelar)? ¿Fecha máxima por producto o por variante? Si se cambia la fecha, ¿afecta a las reservas que ya existen? | RF-RES |
+| TA-07 | ✅ Cuenta obligatoria para reservar (se avisa al usuario). Pendiente: ¿Fecha máxima por producto o por variante? Si se cambia la fecha, ¿afecta a las reservas que ya existen? | RF-RES |
 | TA-08 | ¿El aviso se da de baja tras enviarse una vez? | RF-AVI-02 |
 | TA-09 | Caducidad: ¿retirada el mismo día de caducidad o N días antes? ¿Cuántos días? | RF-STK-03 |
 | TA-10 | Interpretación: promociones automáticas en el MVP y códigos post-MVP con el esquema preparado. ¿Correcto? | RF-CHK-06/07 |
 | TA-11 | Orden por defecto en los listados: ¿novedades primero o manual? | RF-NAV-04 |
 | TA-12 | Opinión tras la entrega: ¿qué formato (responder al email, formulario, encuesta)? ¿Dónde se guarda? | RF-PED-03 |
 | TA-13 | Meta SEO automática: ¿se puede editar a mano? | RF-SEO-02 |
-| TA-14 | Clientes de la UE: ¿se ofrece desistimiento de 14 días? | L-04 |
+| TA-14 | ✅ Resuelto: sí, desistimiento de 14 días para consumidores de la UE | L-04 |
 | TA-15 | Contacto: ¿formulario que envía un email o solo la dirección de email? | RF-CMS-02 |
 | TA-16 | ¿Albaranes imprimibles en el MVP? | RF-PED-07 |
 | TA-17 | ~~¿Neon y Vercel tienen región en Suiza?~~ Resuelto: Frankfurt | RNF-06 |
+
+### Decisiones de la revisión de specs (23-11-2026)
+
+Estas decisiones sustituyen lo que diga en contra el resto del PRD. El detalle está en cada spec.
+
+- **Ofertas por caducidad (F-014):** los lotes a N días de caducar (configurable) salen del catálogo normal y pasan a la sección "Ofertas". El día de la caducidad se retiran.
+- **Packaging (F-016):** tiene stock propio y es uno por pedido.
+- **Envíos (F-031):** tarifa fija por zona, umbral de envío gratis, países bloqueables, y una sección "Envíos" en el panel.
+- **Reservas (F-060):** un carrito mixto genera 2 pedidos con un solo pago. La fecha máxima es por producto. Los packs no se pueden reservar.
+- **Última unidad vendida dos veces (F-033):** se reembolsa la línea, se avisa al cliente y él decide si reserva.
+- **Edición de pedidos (F-042):** la diferencia a pagar queda como "pendiente de pago" en una pestaña aparte y en la cuenta del cliente. Si no se paga en 7 días, se revierte la edición. Si el pedido se abarata, se abona como saldo, que no caduca y se pierde si se borra la cuenta (F-045).
+- **Contraseñas (F-007):** sin requisitos de longitud ni de complejidad.
+- **Banners del inicio (F-024):** rotan solos, con control de pausa. La portada tendrá efectos de scroll (parallax).
+- **Otras:** el menú siempre muestra "Todos los productos", "Destacados" y "Ofertas"; albaranes imprimibles; "¿Problema con tu envío?" en Mis pedidos; emails desde `hello@<dominio>`; sin modo oscuro; sin pentest externo, se hará un análisis con IA.
+- **Temas abiertos resueltos:** TA-04, TA-06, TA-08, TA-09, TA-10, TA-11, TA-12, TA-13, TA-15 y TA-16. Siguen abiertos TA-01 (valores de envío), TA-02 y TA-03.
 
 ## 10. Riesgos
 

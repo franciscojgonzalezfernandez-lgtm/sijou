@@ -123,7 +123,7 @@
 - **CI con GitHub Actions:** lint, comprobación de tipos y pruebas.
 - **Previews de Vercel con una rama de Neon por PR.** Stripe en modo test en preview y en local.
 - **Accesibilidad:** axe-core en Playwright.
-- **Lighthouse 100:** Lighthouse CI en cada preview, perfil móvil. Bloquea el merge si Rendimiento, Accesibilidad, Buenas prácticas o SEO bajan de 100 en las plantillas públicas (ver la constitución, `specs/constitution.md`).
+- **Lighthouse ≥ 90:** Lighthouse CI en cada preview, perfil móvil. Bloquea el merge si Rendimiento, Accesibilidad, Buenas prácticas o SEO bajan de 90 en las plantillas públicas. El objetivo sigue siendo 100 (ver la constitución, `specs/constitution.md`).
 
 ## 4. Stack resumido
 
@@ -165,6 +165,7 @@ order_line(id, order_id, variant_id, qty, unit_price, status{allocated,reserved,
 shipment(id, order_id, carrier, tracking_number, tracking_url, shipped_at, delivered_at, paid_by_store bool)
 payment · refund(stripe_refund_id, amount, lines) · exchange(order_line_id, reason, replacement_shipment_id)
 restock_subscription(customer_id, variant_id, notified_at?)
+store_credit_entry(id, customer_id, delta_chf, reason, order_id?, actor, created_at)   -- saldo = suma de movimientos; solo se añaden filas
 promotion(type{percent,fixed}, value, scope{product,category,collection}, scope_ids, starts_at, ends_at, active)
 discount_code(code, type, value, scope, max_uses, per_customer, first_order_only, expires_at)   -- esquema MVP, uso post-MVP
 shipping_rule(zone, countries[], min_subtotal, max_subtotal?, price_chf) · settings(key, value)
