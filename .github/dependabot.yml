@@ -8,6 +8,10 @@ updates:
     open-pull-requests-limit: 10
     cooldown:
       default-days: 14
+    ignore:
+      # Types must match the Node.js runtime (24 LTS, see .nvmrc); bump together with the runtime.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
     groups:
       next-react:
         patterns:

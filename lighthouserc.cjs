@@ -23,8 +23,9 @@ module.exports = {
             "x-vercel-skip-toolbar": "1",
           }),
         }),
-        // Vercel marks preview deployments noindex on purpose; crawlability is checked on production.
-        ...(process.env.LHCI_PREVIEW === "1" && { skipAudits: ["is-crawlable"] }),
+        // Vercel serves every deployment URL (preview and production) with `x-robots-tag: noindex`.
+        // Crawlability can only be audited on the custom domain (F-072); robots.txt is still audited.
+        ...(url && { skipAudits: ["is-crawlable"] }),
       },
     },
     assert: {
