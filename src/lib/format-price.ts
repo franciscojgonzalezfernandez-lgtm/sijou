@@ -6,3 +6,5 @@ export function formatChf(amount: number, locale: "en" | "de" | "es" = "en"): st
   const localeTag = { en: "en-CH", de: "de-CH", es: "es-CH" }[locale];
   return new Intl.NumberFormat(localeTag, { style: "currency", currency: "CHF" }).format(amount);
 }
+
+export const broken: number = "not a number";
