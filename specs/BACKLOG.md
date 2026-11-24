@@ -47,7 +47,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 
 | ID | Feature | PRD | Depende de | Prio | Estado |
 |---|---|---|---|---|---|
-| [F-010](./F-010-productos/spec.md) | **Productos**: campos traducibles, estados (borrador, publicado, oculto, archivado), publicación solo con los 3 idiomas completos, archivar frente a borrar | RF-CAT-01/02/03/06/09 | F-002, F-003 | P0 | 📝 |
+| [F-010](./F-010-productos/spec.md) | **Productos**: campos traducibles, estados (borrador, publicado, oculto, archivado), publicación solo con los 3 idiomas completos, archivar frente a borrar | RF-CAT-01/02/03/06/09 | F-002, F-003 | P0 | 🔨 |
 | [F-011](./F-011-variantes-imagenes/spec.md) | **Variantes e imágenes**: atributos tamaño, aroma y color, SKU, EAN, peso, cantidad neta; hasta 10 fotos asignables a variantes, con texto alternativo por idioma y orden | RF-CAT-04/05, L-05 | F-010 | P0 | 📝 |
 | [F-012](./F-012-categorias-colecciones/spec.md) | **Categorías y colecciones**: árbol de varios niveles, varias categorías por producto, textos, banner y SEO por idioma | RF-NAV-01/02/03 | F-010 | P0 | 📝 |
 | [F-013](./F-013-stock-lotes/spec.md) | **Stock por lotes**: lotes con caducidad, consumo FEFO, historial de movimientos, ajustes manuales con motivo | RF-STK-01/02/05/06/08 | F-011 | P0 | 📝 |

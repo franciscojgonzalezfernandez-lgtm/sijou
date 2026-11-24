@@ -16,5 +16,11 @@ export const routing = defineRouting({
   // Translated paths for fixed pages; dynamic pages build theirs from DB slugs.
   pathnames: {
     "/": "/",
+    // F-010 D-3: translated segment, translated slug from the database.
+    "/products/[slug]": {
+      en: "/products/[slug]",
+      de: "/produkte/[slug]",
+      es: "/productos/[slug]",
+    },
   },
 });

@@ -28,7 +28,10 @@ export async function visit(
   );
   const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
   expect(
-    violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`),
+    violations.map(
+      (v) =>
+        `${v.id}: ${v.help} (${v.nodes.length} nodes: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")})`,
+    ),
     "axe violations",
   ).toEqual([]);
 }

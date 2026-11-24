@@ -1,5 +1,14 @@
 import { defineConfig, devices } from "@playwright/test";
 
+// Local runs read the seeded test admin from .env.local (CI passes it as secrets).
+if (!process.env.CI) {
+  try {
+    process.loadEnvFile(".env.local");
+  } catch {
+    // No .env.local: admin specs skip themselves.
+  }
+}
+
 const PORT = Number(process.env.PORT ?? 3100);
 const baseURL = process.env.BASE_URL ?? `http://localhost:${PORT}`;
 
