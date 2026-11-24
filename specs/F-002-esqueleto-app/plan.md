@@ -5,7 +5,7 @@
 | Estado | Implementado (23-11-2026) |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-002-esqueleto-app` |
-| Entorno temporal | Cuenta Hobby del técnico hasta N-03 (ver "Desviación temporal") |
+| Entorno | Equipo Vercel Pro de la clienta desde el 25-11-2026 (N-03). Antes, cuenta del técnico (ver "Desviación temporal") |
 
 ## Resumen técnico
 Se añade Payload CMS 3 al proyecto Next.js de F-001, en la misma aplicación: la tienda en el grupo de rutas `(frontend)` y el panel en `(payload)/admin`. La base de datos es Neon (Frankfurt), contratada desde el Marketplace de Vercel, para que cada deploy de preview reciba su propia rama de base de datos sin código propio. Las funciones se fijan en `fra1`. Las migraciones de Payload se ejecutan en el build, así que una migración que falla cancela el deploy. Las variables de entorno se validan al arrancar. Con los previews disponibles, las E2E y Lighthouse pasan a ejecutarse contra la URL del preview, y se cierra la desviación temporal de F-001.
@@ -95,6 +95,7 @@ Todas en versiones publicadas hace al menos 14 días.
 Decidido el 23-11-2026. Hasta que la clienta tenga el equipo Vercel Pro (N-03), el proyecto se despliega en la cuenta Hobby del técnico, con Neon contratado desde esa cuenta (plan gratuito).
 - El plan Hobby es solo para uso no comercial. Sirve para desarrollar y para los previews, pero **la tienda no se abre al público en Hobby**.
 - Antes del lanzamiento (y en cuanto exista el equipo Pro) se crea el proyecto en el equipo de la clienta, se vuelve a contratar Neon allí (los datos de antes del lanzamiento son de prueba) y se copian las variables de entorno. Los secretos de GitHub (`VERCEL_AUTOMATION_BYPASS_SECRET`, `NEON_API_KEY`, `NEON_PROJECT_ID`) se sustituyen por los del equipo nuevo.
+- **Migración hecha el 25-11-2026:** proyecto `sijou` en el equipo de la clienta, Neon nuevo (Frankfurt, plan gratuito, sin Neon Auth), almacén de fotos nuevo, `PAYLOAD_SECRET` nuevo por entorno y secreto de bypass nuevo. El proyecto antiguo queda desconectado de GitHub y se borra con su base de datos cuando se confirme que todo funciona. El dominio provisional de producción es `sijou-nu.vercel.app` hasta tener el dominio propio (N-01).
 - Límites del plan gratuito de Neon (almacenamiento y número de ramas): se borran las ramas de los PR cerrados (job `neon-cleanup`).
 
 ## Dudas
