@@ -22,7 +22,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 | N-01 | Comprar el dominio y configurar el DNS | Técnico | F-002, F-006 | ⬜ |
 | N-02 | Cuenta de Stripe (CH), verificación y alta de TWINT | Clienta | F-032 | ⬜ |
 | N-03 | Equipo Vercel Pro (propiedad de la clienta) e invitación al técnico. Mientras tanto, cuenta Hobby del técnico (solo desarrollo). Al migrar: previews desde la rama `staging` de Neon (D-1 de F-002) | Clienta | Lanzamiento | ⬜ |
-| N-04 | Identidad de marca: logo, colores, tipografías, fotos | Clienta | F-004 (paletas propuestas en [docs/brand](../docs/brand/README.md), falta la elección) | 🔨 |
+| N-04 | Identidad de marca: logo, colores, tipografías, fotos. Paleta, tipografía y personalidad cerradas el 24-11-2026 ([docs/brand](../docs/brand/README.md)). Falta el logotipo en vector (SVG) y las fotos de producto | Clienta | F-004, F-020 | 🔨 |
 | N-05 | Estudio de competidores y palabras clave por mercado (RF-SEO-08) | Técnico + clienta | F-025, F-051 | ⬜ |
 | N-06 | Textos legales y revisión jurídica (PRD §7) | Clienta + asesor | F-053 | ⬜ |
 | N-07 | Cerrar los temas abiertos del PRD (TA-01…TA-16) | Clienta + técnico | Según el TA | ⬜ |
@@ -38,7 +38,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 | [F-001](./F-001-repo-calidad/spec.md) | **Repo y calidad**: TypeScript estricto, lint, formato, Vitest, Playwright + axe, CI en GitHub Actions, **Lighthouse CI con puerta ≥ 90 × 4** | RNF-11, RNF-15 | — | P0 | ✅ |
 | [F-002](./F-002-esqueleto-app/spec.md) | **Esqueleto de la app**: Next.js + Payload 3 + Neon (Frankfurt) + Vercel (fra1), ramas de Neon por preview, variables de entorno | ADR-02/03 | F-001 | P0 | ✅ |
 | [F-003](./F-003-i18n-base/spec.md) | **i18n base**: next-intl, rutas `/[locale]`, detección del idioma del navegador, EN por defecto, selector, mapa de slugs traducidos | RF-I18N | F-002 | P0 | ✅ |
-| [F-004](./F-004-sistema-diseno/spec.md) | **Sistema de diseño accesible**: tokens, paleta AA/AAA, tipografía, componentes base (botón, campo, diálogo, toast, skeleton) | RNF-03 | F-002, N-04 | P0 | 📝 |
+| [F-004](./F-004-sistema-diseno/spec.md) | **Sistema de diseño accesible**: tokens, paleta AA/AAA, tipografía, componentes base (botón, campo, diálogo, toast, skeleton) | RNF-03 | F-002, N-04 | P0 | 📐 |
 | [F-005](./F-005-observabilidad/spec.md) | **Observabilidad**: Sentry (UE), Vercel Analytics y Speed Insights | ADR-12 | F-002 | P0 | 📝 |
 | [F-006](./F-006-emails/spec.md) | **Emails transaccionales**: Resend, dominio autenticado (SPF, DKIM, DMARC), cola de envíos con reintentos (cron), plantillas React Email en 3 idiomas | RNF-13, ADR-07 | F-002, N-01 | P0 | 📝 |
 | [F-007](./F-007-autenticacion/spec.md) | **Autenticación**: Better Auth (Google, Apple, email y contraseña, verificación, recuperación), roles cliente y admin, acceso al panel | RF-CLI-02, RF-ADM-01 | F-002, F-006 | P0 | 📝 |

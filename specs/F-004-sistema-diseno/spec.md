@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026). bloqueada por N-04: marca |
+| Estado | Aprobada (23-11-2026). Paleta y tipografía cerradas (N-04, 24-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RNF-02, RNF-03 |
 | Depende de | F-002, N-04 |
