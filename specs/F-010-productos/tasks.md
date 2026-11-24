@@ -17,6 +17,6 @@ Estado al 25-11-2026. Rama `feat/F-010-productos`.
 - [x] Recorrido completo del panel en verde en escritorio (3 de 3 repeticiones).
 - [x] **Móvil en paralelo:** tras el guardado bloqueado (400), el panel a veces no mostraba el error en el campo Estado. Solución: bloque "Para publicar" en la barra lateral, que pide al servidor (`GET /api/products/:id/readiness`, solo usuarios del panel) la lista de lo que falta y se actualiza tras cada guardado. La E2E comprueba la lista en ese bloque.
 - [x] Secretos `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` en GitHub.
-- [x] PR #16 (borrador): CI en verde; Lighthouse 97–100 en las 6 URLs del preview (falta explicar por qué Perf no llega a 100).
+- [x] PR #16 (borrador): CI en verde; Lighthouse 97–100 en las 6 URLs del preview (Perf 99 en producto: LCP simulado de la foto, explicado en plan.md).
 - [ ] Merge.
 - [ ] Al terminar: spec y plan a "Hecha"/"Implementado", BACKLOG ✅.
