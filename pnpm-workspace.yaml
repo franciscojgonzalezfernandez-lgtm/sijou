@@ -7,3 +7,7 @@ allowBuilds:
 
 # Supply-chain hygiene: only install versions published at least 14 days ago.
 minimumReleaseAge: 20160
+
+patchedDependencies:
+  "@payloadcms/next@3.93.0": patches/@payloadcms__next@3.93.0.patch
+  "@payloadcms/ui@3.93.0": patches/@payloadcms__ui@3.93.0.patch

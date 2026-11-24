@@ -1,0 +1,119 @@
+// Accessibility fixes for Payload's admin theme (F-010, constitution II: WCAG 2.2 AA).
+// Payload greys secondary text with elevation 400/500 (#9a9a9a / #808080), below 4.5:1 on white.
+// Elevation 800 keeps the light/dark theming and passes AA in both.
+.field-description,
+.field-label.unstyled,
+.nav-group__label,
+.doc-controls__label,
+.localizer-button__label,
+.LexicalEditorTheme__placeholder,
+.upload__dragAndDropText {
+  color: var(--theme-elevation-800);
+}
+
+// WCAG 2.5.8: list sort buttons are 20 px wide; targets need at least 24 × 24 px.
+.sort-column__button {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+// Native replacements for react-select (src/components/admin): match Payload's input look.
+.native-select__input {
+  width: 100%;
+  min-height: calc(var(--base) * 2);
+  padding: 0 calc(var(--base) * 0.5);
+  border: 1px solid var(--theme-elevation-400);
+  border-radius: var(--style-radius-s);
+  background: var(--theme-input-bg);
+  color: var(--theme-text);
+  font: inherit;
+}
+
+.native-select__error {
+  margin: calc(var(--base) * 0.5) 0 0;
+  padding-left: calc(var(--base) * 0.5);
+  border-left: 3px solid var(--theme-error-500);
+  color: var(--theme-elevation-800);
+}
+
+.checkbox-relationship {
+  margin: 0 0 var(--base);
+  padding: 0;
+  border: 0;
+
+  legend {
+    margin-bottom: calc(var(--base) * 0.5);
+  }
+}
+
+.checkbox-relationship__list {
+  display: flex;
+  flex-direction: column;
+  gap: calc(var(--base) * 0.25);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.checkbox-relationship__option {
+  display: flex;
+  align-items: center;
+  gap: calc(var(--base) * 0.5);
+  min-height: 24px;
+}
+
+// WCAG 2.1.1: on small screens Payload makes the document meta bar a horizontal scroller with a
+// hidden scrollbar that keyboard users cannot reach. Wrap the items instead of scrolling.
+@media (max-width: 1024px) {
+  .doc-controls__content,
+  .doc-controls__controls {
+    overflow: visible;
+    flex-wrap: wrap;
+  }
+
+  .doc-controls__meta {
+    flex-wrap: wrap;
+  }
+}
+
+// WCAG 2.5.8: the photo field's edit/remove icon buttons are smaller than 24 × 24 px on phones.
+.upload-relationship-details__edit,
+.upload-relationship-details__remove {
+  min-width: 24px;
+  min-height: 24px;
+}
+
+// WCAG 2.5.8 in WebKit: Payload's `text-wrap: nowrap` does not stop a long filename link from
+// overflowing onto the edit button. Clip the link's own box so it cannot cover the target.
+.upload-relationship-details__details {
+  min-width: 0;
+}
+
+.upload-relationship-details__filename a {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// F-010 CA-4: "Para publicar" checklist in the product sidebar.
+.publish-checklist {
+  margin: 0 0 var(--base);
+  padding: calc(var(--base) * 0.75);
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: var(--style-radius-s);
+
+  p {
+    margin: 0;
+  }
+}
+
+.publish-checklist__title {
+  margin: 0 0 calc(var(--base) * 0.5);
+  font-size: 1rem;
+}
+
+.publish-checklist__list {
+  margin: 0;
+  padding-left: calc(var(--base) * 1);
+}

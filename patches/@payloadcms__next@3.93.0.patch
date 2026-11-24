@@ -1,0 +1,13 @@
+diff --git a/dist/elements/DocumentHeader/Tabs/index.js b/dist/elements/DocumentHeader/Tabs/index.js
+--- a/dist/elements/DocumentHeader/Tabs/index.js
++++ b/dist/elements/DocumentHeader/Tabs/index.js
+@@ -24,7 +24,8 @@ export const DocumentTabs = ({
+       className: baseClass,
+       children: /*#__PURE__*/_jsx("div", {
+         className: `${baseClass}__tabs-container`,
+-        children: /*#__PURE__*/_jsx("ul", {
++        // Patched (Sijou F-010): tabs are links, not <li>; a <ul> may only contain <li> (WCAG 1.3.1).
++        children: /*#__PURE__*/_jsx("div", {
+           className: `${baseClass}__tabs`,
+           children: tabs?.map(({
+             tab: tabConfig,

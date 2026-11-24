@@ -3,7 +3,18 @@
 const url = process.env.LH_BASE_URL;
 // Constitution I: every locale is audited.
 const LOCALES = ["en", "de", "es"];
-const urlsFor = (base) => LOCALES.map((l) => new URL(`/${l}`, base).toString());
+// F-010: the seeded sample product (keep in sync with scripts/seed-data.ts). Production has no
+// sample data (F-002 CA-7), so it is audited only on previews and locally.
+const PRODUCT_PATHS = [
+  "/en/products/lavender-face-cream",
+  "/de/produkte/lavendel-gesichtscreme",
+  "/es/productos/crema-facial-de-lavanda",
+];
+const withProducts = process.env.DEPLOY_ENV !== "Production";
+const urlsFor = (base) =>
+  [...LOCALES.map((l) => `/${l}`), ...(withProducts ? PRODUCT_PATHS : [])].map((path) =>
+    new URL(path, base).toString(),
+  );
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 module.exports = {

@@ -34,3 +34,6 @@ next-env.d.ts
 .vercel
 .env*
 !.env.example
+
+# Local uploads (F-010)
+/media

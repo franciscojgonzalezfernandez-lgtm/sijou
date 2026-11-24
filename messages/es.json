@@ -16,5 +16,16 @@
     "title": "Página no encontrada",
     "description": "La página que buscas no existe o ha cambiado de dirección.",
     "backHome": "Volver a la página de inicio"
+  },
+  "Product": {
+    "price": "Precio",
+    "details": "Información del producto",
+    "inci": "Ingredientes (INCI)",
+    "usage": "Modo de uso",
+    "warnings": "Advertencias",
+    "allergens": "Alérgenos",
+    "certifications": "Certificaciones",
+    "pao": "Caducidad tras abrir",
+    "backHome": "Inicio"
   }
 }

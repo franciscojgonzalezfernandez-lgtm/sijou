@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (24-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RF-CAT-01, 02, 03, 06, 09 |
 | Depende de | F-002, F-003 |

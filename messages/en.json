@@ -16,5 +16,16 @@
     "title": "Page not found",
     "description": "The page you are looking for does not exist or has moved.",
     "backHome": "Back to the home page"
+  },
+  "Product": {
+    "price": "Price",
+    "details": "Product details",
+    "inci": "Ingredients (INCI)",
+    "usage": "How to use",
+    "warnings": "Warnings",
+    "allergens": "Allergens",
+    "certifications": "Certifications",
+    "pao": "Use within after opening",
+    "backHome": "Home"
   }
 }

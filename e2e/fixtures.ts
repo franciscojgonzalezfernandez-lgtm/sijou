@@ -19,7 +19,9 @@ export async function visit(
   } = {},
 ): Promise<void> {
   const response = await page.goto(url);
-  expect(response?.ok(), `GET ${url} returned ${response?.status()}`).toBe(true);
+  // 304: WebKit revalidates a page it has already seen; the cached copy is what it shows.
+  const status = response?.status() ?? 0;
+  expect(status >= 200 && status < 400, `GET ${url} returned ${status}`).toBe(true);
   await page.waitForLoadState("load");
   if (options.ready) await options.ready(page).waitFor();
   // Audit the settled page: mid-fade elements report false colour-contrast failures.
@@ -28,7 +30,10 @@ export async function visit(
   );
   const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
   expect(
-    violations.map((v) => `${v.id}: ${v.help} (${v.nodes.length} nodes)`),
+    violations.map(
+      (v) =>
+        `${v.id}: ${v.help} (${v.nodes.length} nodes: ${v.nodes.map((n) => n.target.join(" ")).join(" | ")})`,
+    ),
     "axe violations",
   ).toEqual([]);
 }
