@@ -1,7 +1,7 @@
 import { readFile } from "node:fs/promises";
 import path from "node:path";
 
-import type { APIRequestContext, Page } from "@playwright/test";
+import { request, type APIRequestContext, type Page } from "@playwright/test";
 
 import { seedProduct, seedProductPaths } from "../scripts/seed-data";
 import { expect, test, visit } from "./fixtures";
@@ -128,7 +128,7 @@ test.describe("F-010 product lifecycle in the admin", () => {
     let id = "";
     await test.step("CA-3: save a draft with only the Spanish name", async () => {
       await visit(page, "/admin/collections/products/create?locale=es", {
-        ready: (p) => p.getByRole("textbox", { name: /^Nombre/ }),
+        ready: hydrated,
       });
       await page.getByRole("textbox", { name: /^Nombre/ }).fill(names.es);
       await page.getByRole("button", { name: "Guardar" }).click();
@@ -154,12 +154,16 @@ test.describe("F-010 product lifecycle in the admin", () => {
       });
       await page.getByRole("combobox", { name: "Estado" }).selectOption({ label: "Publicado" });
       expect(await save(page)).toBe(400);
-      const alert = page.getByText(/Falta en inglés: .*nombre/);
-      // The save round-trip can be slow when the three device projects run in parallel.
-      await expect(alert.first()).toBeVisible({ timeout: 15_000 });
-      await expect(page.getByText(/Falta en alemán:/).first()).toBeVisible();
-      await expect(page.getByText("Falta al menos una categoría.").first()).toBeVisible();
-      await expect(page.getByText("Falta al menos una foto.").first()).toBeVisible();
+      // The sidebar box lists, from the server, everything still missing in every language.
+      const checklist = page.getByRole("region", { name: "Para publicar" });
+      await expect(checklist.getByText(/Falta en inglés: .*nombre/)).toBeVisible();
+      await expect(checklist.getByText(/Falta en alemán:/)).toBeVisible();
+      await expect(checklist.getByText("Falta al menos una categoría.")).toBeVisible();
+      await expect(checklist.getByText("Falta al menos una foto.")).toBeVisible();
+      const { baseURL, extraHTTPHeaders } = test.info().project.use;
+      const anonymous = await request.newContext({ baseURL, extraHTTPHeaders });
+      expect((await anonymous.get(`/api/products/${id}/readiness`)).status()).toBe(401);
+      await anonymous.dispose();
       const doc = await api<{ status: string }>(page.request, "get", `/api/products/${id}?depth=0`);
       expect(doc.status).toBe("draft");
     });
@@ -216,6 +220,9 @@ test.describe("F-010 product lifecycle in the admin", () => {
       await visit(page, `/admin/collections/products/${id}?locale=es`, {
         ready: hydrated,
       });
+      await expect(
+        page.getByRole("region", { name: "Para publicar" }).getByText("Listo para publicar."),
+      ).toBeVisible();
       await page.getByRole("combobox", { name: "Estado" }).selectOption({ label: "Publicado" });
       expect(await save(page)).toBe(200);
       await expect

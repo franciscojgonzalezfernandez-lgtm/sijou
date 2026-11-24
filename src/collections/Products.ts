@@ -1,6 +1,16 @@
-import { ValidationError, type CollectionBeforeChangeHook, type CollectionConfig } from "payload";
+import {
+  ValidationError,
+  type CollectionBeforeChangeHook,
+  type CollectionConfig,
+  type PayloadRequest,
+} from "payload";
 
-import { formatMissing, publishReadiness, type ReadinessImage } from "@/domain/products/readiness";
+import {
+  formatMissing,
+  publishReadiness,
+  type Readiness,
+  type ReadinessImage,
+} from "@/domain/products/readiness";
 import {
   productStatusLabels,
   productStatuses,
@@ -31,14 +41,14 @@ function ids(value: unknown): (number | string)[] {
 }
 
 /**
- * F-010 CA-2/CA-4: saving with status `published` re-reads the product in every language,
- * overlays the language being saved, and refuses the save with the list of what is missing.
+ * Readiness of a product (F-010 CA-2): the stored product in every language, optionally overlaid
+ * with the data being saved in `locale`, plus its categories, photos and variants.
  */
-const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
-  const product = data as ProductData;
-  if (product.status !== "published") return data;
-
-  const id = idOf(originalDoc);
+async function readinessOf(
+  req: PayloadRequest,
+  id: number | string | undefined,
+  pending: ProductData = {},
+): Promise<Readiness> {
   const stored: ProductData = id
     ? ((await req.payload.findByID({
         collection: "products",
@@ -53,15 +63,15 @@ const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, origi
   const all: Record<string, Localized> = {};
   for (const field of LOCALIZED_FIELDS) {
     const merged: Localized = { ...((stored[field] as Localized | undefined) ?? {}) };
-    if (locale && locale !== "all" && field in product) merged[locale] = product[field];
-    if (locale === "all" && typeof product[field] === "object") {
-      Object.assign(merged, product[field]);
+    if (locale && locale !== "all" && field in pending) merged[locale] = pending[field];
+    if (locale === "all" && typeof pending[field] === "object") {
+      Object.assign(merged, pending[field]);
     }
     all[field] = merged;
   }
 
-  const categories = "categories" in product ? product.categories : stored.categories;
-  const imageIds = ids("images" in product ? product.images : stored.images);
+  const categories = "categories" in pending ? pending.categories : stored.categories;
+  const imageIds = ids("images" in pending ? pending.images : stored.images);
   const images: ReadinessImage[] = imageIds.length
     ? (
         await req.payload.find({
@@ -87,7 +97,7 @@ const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, origi
       ).docs
     : [];
 
-  const readiness = publishReadiness({
+  return publishReadiness({
     name: all.name,
     slug: all.slug,
     shortDescription: all.shortDescription,
@@ -96,6 +106,13 @@ const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, origi
     variants,
     images,
   });
+}
+
+/** CA-2/CA-4: saving with status `published` is refused with the list of what is missing. */
+const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, originalDoc, req }) => {
+  const product = data as ProductData;
+  if (product.status !== "published") return data;
+  const readiness = await readinessOf(req, idOf(originalDoc), product);
   if (readiness.ready) return data;
 
   // One message: the admin shows a single error per field, and CA-4 needs the whole list.
@@ -127,7 +144,28 @@ export const Products: CollectionConfig = {
         : { status: { not_equals: "archived" } };
     },
   },
+  // CA-4: what is still missing to publish, for the sidebar checklist (admins only).
+  endpoints: [
+    {
+      path: "/:id/readiness",
+      method: "get",
+      handler: async (req) => {
+        if (!req.user) return Response.json({ error: "Unauthorized" }, { status: 401 });
+        const id = req.routeParams?.id as string | undefined;
+        const readiness = await readinessOf(req, id);
+        return Response.json({ ready: readiness.ready, lines: formatMissing(readiness.missing) });
+      },
+    },
+  ],
   fields: [
+    {
+      name: "publishChecklist",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        components: { Field: "/components/admin/PublishChecklist#PublishChecklist" },
+      },
+    },
     {
       name: "status",
       type: "select",

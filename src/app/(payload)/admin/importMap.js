@@ -1,3 +1,4 @@
+import { PublishChecklist as PublishChecklist_ba5ff3d977a9fa1ad0fa1587bd352b2e } from '../../../components/admin/PublishChecklist'
 import { NativeSelect as NativeSelect_e18b50096e9c292d23b5266baafb4162 } from '../../../components/admin/NativeSelect'
 import { CheckboxRelationship as CheckboxRelationship_8cc9f63a70ba7bce9fb15f10fd943503 } from '../../../components/admin/CheckboxRelationship'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -29,6 +30,7 @@ import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "/components/admin/PublishChecklist#PublishChecklist": PublishChecklist_ba5ff3d977a9fa1ad0fa1587bd352b2e,
   "/components/admin/NativeSelect#NativeSelect": NativeSelect_e18b50096e9c292d23b5266baafb4162,
   "/components/admin/CheckboxRelationship#CheckboxRelationship": CheckboxRelationship_8cc9f63a70ba7bce9fb15f10fd943503,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,

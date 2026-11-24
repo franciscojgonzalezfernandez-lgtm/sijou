@@ -82,3 +82,38 @@
   min-width: 24px;
   min-height: 24px;
 }
+
+// WCAG 2.5.8 in WebKit: Payload's `text-wrap: nowrap` does not stop a long filename link from
+// overflowing onto the edit button. Clip the link's own box so it cannot cover the target.
+.upload-relationship-details__details {
+  min-width: 0;
+}
+
+.upload-relationship-details__filename a {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+// F-010 CA-4: "Para publicar" checklist in the product sidebar.
+.publish-checklist {
+  margin: 0 0 var(--base);
+  padding: calc(var(--base) * 0.75);
+  border: 1px solid var(--theme-elevation-200);
+  border-radius: var(--style-radius-s);
+
+  p {
+    margin: 0;
+  }
+}
+
+.publish-checklist__title {
+  margin: 0 0 calc(var(--base) * 0.5);
+  font-size: 1rem;
+}
+
+.publish-checklist__list {
+  margin: 0;
+  padding-left: calc(var(--base) * 1);
+}

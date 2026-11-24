@@ -15,8 +15,8 @@ Estado al 25-11-2026. Rama `feat/F-010-productos`.
 - [x] E2E de la tienda (3 idiomas × 3 dispositivos) en verde en local.
 - [x] Decisión: arreglar los problemas de accesibilidad del panel sin excepciones (campos propios, funcionalidad de Lexical, parches de Payload, CSS).
 - [x] Recorrido completo del panel en verde en escritorio (3 de 3 repeticiones).
-- [ ] **Móvil en paralelo:** a veces, tras el guardado bloqueado (respuesta 400), el panel no marca el campo Estado ni muestra la lista (sí funciona en solitario). Investigar si una actualización del estado del formulario de Payload borra los errores del servidor; si es así, mostrar la lista de lo que falta de forma persistente (p. ej. un bloque "Para publicar falta…" en la barra lateral).
-- [ ] Secretos `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` en GitHub.
+- [x] **Móvil en paralelo:** tras el guardado bloqueado (400), el panel a veces no mostraba el error en el campo Estado. Solución: bloque "Para publicar" en la barra lateral, que pide al servidor (`GET /api/products/:id/readiness`, solo usuarios del panel) la lista de lo que falta y se actualiza tras cada guardado. La E2E comprueba la lista en ese bloque.
+- [x] Secretos `SEED_ADMIN_EMAIL` y `SEED_ADMIN_PASSWORD` en GitHub.
 - [x] PR #16 (borrador): CI en verde; Lighthouse 97–100 en las 6 URLs del preview (falta explicar por qué Perf no llega a 100).
 - [ ] Merge.
 - [ ] Al terminar: spec y plan a "Hecha"/"Implementado", BACKLOG ✅.
