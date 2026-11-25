@@ -102,20 +102,20 @@ export default async function CatalogPage({ params }: PageProps<"/[locale]/catal
         <Section id="logo" title={t("logo")} intro={t("logoIntro")}>
           <div className="grid gap-4 sm:grid-cols-[2fr_2fr_1fr]">
             <figure className="flex flex-col gap-2">
-              <div className="border-line bg-raised text-brand grid min-h-40 place-items-center rounded-md border p-6">
+              <div className="border-line bg-raised text-brand grid min-h-48 place-items-center rounded-md border p-6">
                 <Logo className="w-full max-w-72" />
               </div>
               <figcaption className="type-body-sm text-ink-muted">{t("onLinen")}</figcaption>
             </figure>
             <figure className="flex flex-col gap-2">
-              <div className="bg-accent text-on-accent grid min-h-40 place-items-center rounded-md p-6">
-                <Logo className="w-full max-w-72" />
+              <div className="bg-accent text-on-accent grid min-h-48 place-items-center rounded-md p-6">
+                <Logo variant="stacked" className="w-full max-w-56" />
               </div>
               <figcaption className="type-body-sm text-ink-muted">{t("onOlive")}</figcaption>
             </figure>
             <figure className="flex flex-col gap-2">
-              <div className="border-line bg-raised text-brand grid min-h-40 place-items-center rounded-md border p-6">
-                <Logo variant="mark" className="size-16" />
+              <div className="border-line bg-raised text-brand grid min-h-48 place-items-center rounded-md border p-6">
+                <Logo variant="mark" className="w-14" />
               </div>
               <figcaption className="type-body-sm text-ink-muted">{t("icon")}</figcaption>
             </figure>

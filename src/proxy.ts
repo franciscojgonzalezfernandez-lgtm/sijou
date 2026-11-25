@@ -6,6 +6,7 @@ import { routing } from "./i18n/routing";
 export default createMiddleware(routing);
 
 export const config = {
-  // Everything except the admin panel, the API, Next/Vercel internals and files with an extension.
-  matcher: ["/((?!api|admin|_next|_vercel|.*\\..*).*)"],
+  // Everything except the admin panel, the API, Next/Vercel internals, files with an extension and
+  // the generated icons (F-004 CA-10), which have no extension in their URL.
+  matcher: ["/((?!api|admin|_next|_vercel|icon|apple-icon|.*\\..*).*)"],
 };

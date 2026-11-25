@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Sijou — Cosmética natural",
-    "description": "Cosmética natural de Sijou. Nuestra tienda online abre pronto, con productos hechos a mano y enviados desde Suiza."
+    "title": "Maison Natur — Cosmética natural",
+    "description": "Cosmética natural de Maison Natur. Nuestra tienda online abre pronto, con productos hechos a mano y enviados desde Suiza."
   },
   "Home": {
     "tagline": "Cosmética natural, muy pronto. Estamos preparando nuestra tienda online."
@@ -30,16 +30,16 @@
   "Common": {
     "skipToContent": "Saltar al contenido",
     "close": "Cerrar",
-    "home": "Maison natur, inicio"
+    "home": "Maison Natur, inicio"
   },
   "Catalog": {
     "metaTitle": "Catálogo de componentes",
     "title": "Catálogo de componentes",
     "intro": "Página interna del sistema de diseño: cada componente en sus estados, con los textos reales en cada idioma. No aparece en los buscadores.",
     "logo": "Logotipo",
-    "logoIntro": "Propuesta provisional «Firma». Se sustituye por la versión que elija la clienta.",
-    "onLinen": "Sobre lino",
-    "onOlive": "Sobre oliva",
+    "logoIntro": "Logotipo «Rama», elegido por la clienta: una rama de olivo junto al nombre. Versión horizontal para la cabecera, apilada para espacios grandes y la rama sola como icono.",
+    "onLinen": "Horizontal, en la cabecera",
+    "onOlive": "Apilado, sobre oliva",
     "icon": "Icono",
     "colors": "Colores",
     "colorsIntro": "Tokens semánticos. Cada par de texto y fondo tiene el contraste medido en las pruebas.",

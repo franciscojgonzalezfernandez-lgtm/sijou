@@ -27,7 +27,7 @@ export default buildConfig({
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
     meta: {
-      titleSuffix: " · Sijou",
+      titleSuffix: " · Maison Natur",
       // F-002 CA-8: the admin panel must never be indexed.
       robots: "noindex, nofollow",
     },

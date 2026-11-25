@@ -1,59 +1,94 @@
 import { cx } from "@/components/ui/cx";
 
-/** The brand name is a proper noun: the same in every language. */
-export const BRAND_NAME = "Maison natur";
+import { LEAF, LEAVES, leafTransform, SPRIG_BOX, SPRIG_STEM } from "./sprig";
+
+/** The brand name: a proper noun, the same in every language, with a capital N. */
+export const BRAND_NAME = "Maison Natur";
+
+// Cormorant Garamond 500 at 88 units: "Maison Natur" measures 480.5 units wide.
+const WORD = { size: 88, width: 481 } as const;
+
+function Sprig({ x = 0, y = 0 }: { x?: number; y?: number }) {
+  return (
+    <g transform={`translate(${x} ${y})`} fill="currentColor">
+      <path
+        d={SPRIG_STEM}
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+      />
+      {LEAVES.map((leaf) => (
+        <path key={leaf.join()} d={LEAF} transform={leafTransform(leaf)} />
+      ))}
+    </g>
+  );
+}
+
+function Word({ x, y, anchor }: { x: number; y: number; anchor: "start" | "middle" }) {
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor={anchor}
+      fill="currentColor"
+      style={{ fontFamily: "var(--font-serif)", fontSize: WORD.size, fontWeight: 500 }}
+    >
+      {BRAND_NAME}
+    </text>
+  );
+}
+
+export type LogoVariant = "horizontal" | "stacked" | "mark";
 
 /**
- * Serif "M" drawn as paths (thin left stem and right diagonal, thick left diagonal and right
- * stem, as in Garamond). Used for the icon, which cannot rely on web fonts.
- */
-export const MARK_PATHS = [
-  "M13 14h2.6v35H13z",
-  "M13 14h5.6l15.6 33.4-2 3.6z",
-  "M31.2 51l1.7-3.4L47.6 14H50z",
-  "M45.6 14h6v35h-6z",
-  "M8 12.6h10.4v1.8H8zM45.6 12.6H56v1.8H45.6zM8.6 48.4h11.2v1.8H8.6zM41.2 48.4H56v1.8H41.2z",
-];
-
-/**
- * Logo (F-004 CA-10). Provisional "Firma" proposal (the brand's current wordmark) until the client
- * chooses one of the four proposals; the final SVG, with outlined letters, replaces the inside of
- * this component without changing its API. Colour comes from `currentColor`.
+ * Logo (F-004 CA-10): the "Rama" proposal, an olive sprig with the name in Cormorant Garamond.
+ * `horizontal` for the header, `stacked` for large spaces, `mark` (sprig only) for icons.
+ * Colour comes from `currentColor`: forest green on linen, linen on olive.
  */
 export function Logo({
-  variant = "wordmark",
+  variant = "horizontal",
   className,
   decorative = false,
 }: {
-  variant?: "wordmark" | "mark";
+  variant?: LogoVariant;
   className?: string;
-  /** True when a link or text next to it already says "Maison natur". */
+  /** True when a link or text next to it already says "Maison Natur". */
   decorative?: boolean;
 }) {
   const a11y = decorative
     ? ({ "aria-hidden": true } as const)
     : ({ role: "img", "aria-label": BRAND_NAME } as const);
+  const gap = 16;
 
   if (variant === "mark") {
     return (
-      <svg viewBox="0 0 64 64" className={cx("block", className)} fill="currentColor" {...a11y}>
-        {MARK_PATHS.map((d) => (
-          <path key={d} d={d} />
-        ))}
+      <svg
+        viewBox={`0 0 ${SPRIG_BOX.width} ${SPRIG_BOX.height}`}
+        className={cx("block h-auto", className)}
+        {...a11y}
+      >
+        <Sprig />
+      </svg>
+    );
+  }
+  if (variant === "stacked") {
+    const width = WORD.width + 8;
+    return (
+      <svg viewBox={`0 0 ${width} 222`} className={cx("block h-auto", className)} {...a11y}>
+        <Sprig x={(width - SPRIG_BOX.width) / 2} />
+        <Word x={width / 2} y={124 + gap + 64} anchor="middle" />
       </svg>
     );
   }
   return (
-    <svg viewBox="0 0 400 72" className={cx("block h-auto", className)} {...a11y}>
-      <text
-        x="200"
-        y="54"
-        textAnchor="middle"
-        fill="currentColor"
-        style={{ fontFamily: "var(--font-serif)", fontSize: 64, fontWeight: 500 }}
-      >
-        {BRAND_NAME}
-      </text>
+    <svg
+      viewBox={`0 0 ${SPRIG_BOX.width + gap + WORD.width + 4} ${SPRIG_BOX.height}`}
+      className={cx("block h-auto", className)}
+      {...a11y}
+    >
+      <Sprig />
+      <Word x={SPRIG_BOX.width + gap} y={90} anchor="start" />
     </svg>
   );
 }

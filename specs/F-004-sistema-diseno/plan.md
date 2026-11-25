@@ -113,10 +113,11 @@ Además: `forced-colors: active` mantiene bordes y foco con colores del sistema 
 
 ## Logotipo (CA-10)
 
-- Propuestas en la guía privada de marca (fuera del repositorio): **Firma** (solo letras, la actual), **Hoja** (la «i» con una hoja de olivo en marrón tierra), **Rama** (rama de olivo + nombre) y **Arco** (arco con las iniciales «Mn» + nombre, y sello para impresión).
-- `src/components/brand/Logo.tsx`: SVG en línea con `role="img"` y `aria-label="Maison natur"` (nombre propio, igual en los tres idiomas), color por `currentColor` para servir en verde bosque o en lino claro. Variantes `wordmark` (cabecera) y `mark` (icono). Dentro de un enlace a inicio, el enlace toma el nombre del SVG.
-- Mientras la clienta elige se usa **Firma**, con las letras dibujadas en Cormorant Garamond (la fuente ya cargada). El SVG definitivo, con las letras convertidas en trazos, sustituye al provisional sin cambiar la API del componente.
-- `src/app/icon.svg` y `src/app/apple-icon.png` (convención de archivos de Next): favicon e icono de app desde la variante `mark`. Se borra `favicon.ico`, que es el de la plantilla.
+- La clienta eligió **Rama** (25-11-2026) entre cuatro propuestas (Firma, Hoja, Rama, Arco): una rama de olivo de trazo fino junto al nombre. Nombre definitivo de la marca: **Maison Natur**, con N mayúscula.
+- `src/components/brand/sprig.ts`: geometría de la rama (tallo y ocho hojas), única fuente para el logotipo, el favicon y el icono de app.
+- `src/components/brand/logo.tsx`: SVG en línea con `role="img"` y `aria-label="Maison Natur"` (nombre propio, igual en los tres idiomas), color por `currentColor` para servir en verde bosque o en lino claro. Variantes `horizontal` (cabecera), `stacked` (espacios grandes) y `mark` (la rama sola). El nombre se dibuja con Cormorant Garamond, que la página ya carga; el marco del SVG está medido sobre esa fuente. En la cabecera, el enlace a inicio lleva el nombre y el SVG es decorativo.
+- `src/app/icon.tsx` (SVG) y `src/app/apple-icon.tsx` (PNG 180×180): la rama inclinada sobre lino y sobre oliva, con el tallo más grueso para que se lea a 16 px.
+- Pendiente para impresión (N-04): versión con las letras convertidas en trazos, que no dependa de la fuente.
 
 ## Rutas, acciones y contratos
 

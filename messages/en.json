@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Sijou — Natural cosmetics",
-    "description": "Sijou natural cosmetics. Our online shop is coming soon, with handmade products shipped from Switzerland."
+    "title": "Maison Natur — Natural cosmetics",
+    "description": "Maison Natur natural cosmetics. Our online shop is coming soon, with handmade products shipped from Switzerland."
   },
   "Home": {
     "tagline": "Natural cosmetics, coming soon. We are preparing our online shop."
@@ -30,16 +30,16 @@
   "Common": {
     "skipToContent": "Skip to content",
     "close": "Close",
-    "home": "Maison natur, home"
+    "home": "Maison Natur, home"
   },
   "Catalog": {
     "metaTitle": "Component catalogue",
     "title": "Component catalogue",
     "intro": "Internal design system page: every component in its states, with real copy in each language. Search engines do not list it.",
     "logo": "Logo",
-    "logoIntro": "Provisional “Firma” proposal. It will be replaced by the version the client chooses.",
-    "onLinen": "On linen",
-    "onOlive": "On olive",
+    "logoIntro": "The “Rama” logo chosen by the client: an olive sprig beside the name. Horizontal for the header, stacked for large spaces, and the sprig alone as the icon.",
+    "onLinen": "Horizontal, in the header",
+    "onOlive": "Stacked, on olive",
     "icon": "Icon",
     "colors": "Colours",
     "colorsIntro": "Semantic tokens. Every text and background pair has its contrast measured in the tests.",

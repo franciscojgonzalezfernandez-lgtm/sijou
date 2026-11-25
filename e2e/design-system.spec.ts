@@ -27,14 +27,24 @@ test.describe("component catalogue", () => {
     page,
   }) => {
     await visit(page, CATALOG.es);
-    const logo = page.getByRole("banner").getByRole("link", { name: "Maison natur, inicio" });
+    const logo = page.getByRole("banner").getByRole("link", { name: "Maison Natur, inicio" });
     await expect(logo).toBeVisible();
-    await expect(page.getByRole("img", { name: "Maison natur" }).first()).toBeVisible();
+    await expect(page.getByRole("img", { name: "Maison Natur" }).first()).toBeVisible();
     await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute("href", /icon/);
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
       "href",
       /apple-icon/,
     );
+    // The icons answer themselves; the language proxy must not redirect them.
+    for (const [rel, type] of [
+      ["icon", "image/svg+xml"],
+      ["apple-touch-icon", "image/png"],
+    ]) {
+      const href = await page.locator(`link[rel="${rel}"]`).first().getAttribute("href");
+      const response = await page.request.get(href ?? "", { maxRedirects: 0 });
+      expect(response.status(), rel).toBe(200);
+      expect(response.headers()["content-type"], rel).toContain(type);
+    }
     await logo.click();
     await expect(page).toHaveURL(/\/es$/);
   });

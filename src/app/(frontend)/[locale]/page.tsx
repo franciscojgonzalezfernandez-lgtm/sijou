@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
+import { BRAND_NAME } from "@/components/brand/logo";
 import { SiteHeader } from "@/components/site-header";
 import { buildAlternates, type LocalizedPaths } from "@/i18n/alternates";
 import { defaultLocale, isLocale, locales } from "@/i18n/locales";
@@ -31,7 +32,7 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
         tabIndex={-1}
         className="page-gutter mx-auto flex w-full max-w-(--content-max) flex-1 flex-col justify-center gap-4 py-16"
       >
-        <h1 className="type-display text-brand">Sijou</h1>
+        <h1 className="type-display text-brand">{BRAND_NAME}</h1>
         <p className="type-body measure text-ink-muted">{t("tagline")}</p>
       </main>
     </>
