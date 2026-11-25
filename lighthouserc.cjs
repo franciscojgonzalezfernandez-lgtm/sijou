@@ -33,12 +33,13 @@ module.exports = {
             url: urlsFor("http://localhost:3100"),
           }),
       numberOfRuns: 3,
+      // Sets the bypass cookie (robots.txt is fetched with cookies, not extra headers) and warms
+      // the edge cache, so measured page loads skip the set-cookie redirect and a cold cache.
+      ...(bypass && { puppeteerScript: "./lighthouse-warmup.cjs" }),
       settings: {
         ...(bypass && {
           extraHeaders: JSON.stringify({
             "x-vercel-protection-bypass": bypass,
-            // Sets a bypass cookie so Lighthouse's own fetches (robots.txt) also get through.
-            "x-vercel-set-bypass-cookie": "true",
             "x-vercel-skip-toolbar": "1",
           }),
         }),
