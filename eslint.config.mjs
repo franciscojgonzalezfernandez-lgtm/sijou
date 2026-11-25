@@ -55,6 +55,7 @@ const eslintConfig = defineConfig([
     "next-env.d.ts",
     "*.config.{js,cjs,mjs}",
     "lighthouserc.cjs",
+    "lighthouse-warmup.cjs",
     "src/payload-types.ts",
     "src/migrations/**",
     "src/app/(payload)/**",
