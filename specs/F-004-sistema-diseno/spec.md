@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026). Paleta y tipografía cerradas (N-04, 24-11-2026). Logotipo «Rama» elegido (25-11-2026) |
+| Estado | Hecha (25-11-2026). Verificada en producción: catálogo en 3 idiomas, logotipo «Rama», favicon e icono de app |
 | Prioridad | P0 |
 | Requisitos PRD | RNF-02, RNF-03 |
 | Depende de | F-002, N-04 |
