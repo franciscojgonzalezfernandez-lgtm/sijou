@@ -1,0 +1,109 @@
+/*
+ * F-004 design tokens: the single source of colour, type, radius, shadow and motion (CA-1).
+ * Two levels: primitives per hue (12-step OKLCH ramps stored as hex, Radix step roles) and
+ * semantic tokens per role. Components use semantic tokens only. No dark mode (out of scope).
+ * src/styles/tokens.test.ts measures every pair in the F-004 plan against these values (CA-2).
+ */
+:root {
+  /* Primitives: linen (neutral, hue 78°). Only published steps are listed. */
+  --linen-1: #fbfaf8;
+  --linen-2: #f6f4f1;
+  --linen-3: #efece8;
+  --linen-4: #e8e4de;
+  --linen-5: #e1dcd4;
+  --linen-6: #d8d2c8;
+  --linen-10: #877b6a;
+  --linen-11: #63594b;
+  --linen-12: #342d22;
+
+  /* Primitives: olive (accent, 122°). Step 12 is the logo green. */
+  --olive-3: #ebeee4;
+  --olive-9: #4a552f;
+  --olive-10: #3d4722;
+  --olive-11: #56603f;
+  --olive-12: #33421e;
+
+  /* Primitives: earth (58°). */
+  --earth-3: #f7eae1;
+  --earth-9: #7a502e;
+  --earth-10: #6b4220;
+  --earth-11: #765236;
+
+  /* Primitives: status hues, more than 15° away from olive and earth. */
+  --red-3: #ffe7e3;
+  --red-9: #a8372e;
+  --red-11: #953830;
+  --green-3: #e1f2e8;
+  --green-11: #2f684c;
+  --amber-3: #f7ebd8;
+  --amber-11: #755402;
+
+  /* Semantic colour. */
+  --color-bg-page: var(--linen-2);
+  --color-bg-subtle: var(--linen-3);
+  --color-bg-surface: var(--linen-4);
+  --color-bg-surface-hover: var(--linen-5);
+  --color-bg-raised: var(--linen-1);
+  --color-border-subtle: var(--linen-6);
+  --color-border-control: var(--linen-10);
+  --color-text-primary: var(--linen-12);
+  --color-text-secondary: var(--linen-11);
+  --color-brand: var(--olive-12);
+  --color-accent-solid: var(--olive-9);
+  --color-accent-solid-hover: var(--olive-10);
+  --color-text-on-accent: var(--linen-1);
+  --color-accent-subtle: var(--olive-3);
+  --color-accent-text: var(--olive-11);
+  --color-earth-solid: var(--earth-9);
+  --color-earth-solid-hover: var(--earth-10);
+  --color-earth-subtle: var(--earth-3);
+  --color-earth-text: var(--earth-11);
+  --color-focus-ring: var(--earth-9);
+  --color-danger-subtle: var(--red-3);
+  --color-danger-solid: var(--red-9);
+  --color-danger-text: var(--red-11);
+  --color-success-subtle: var(--green-3);
+  --color-success-text: var(--green-11);
+  --color-warning-subtle: var(--amber-3);
+  --color-warning-text: var(--amber-11);
+
+  /* Radius: no pills. Tailwind's rounded-sm/md/lg read these names directly. */
+  --radius-sm: 2px;
+  --radius-md: 4px;
+  --radius-lg: 8px;
+
+  /* Only overlays (dialog, menu, toast) cast a shadow. */
+  --elevation-overlay: 0 1px 2px rgb(52 45 34 / 0.08), 0 8px 24px rgb(52 45 34 / 0.12);
+
+  /* Type scale (sizes; families, weights and leading live in the type-* utilities). */
+  --type-display-size: clamp(2.5rem, 1.9rem + 2.5vw, 3.5rem);
+  --type-title-size: clamp(2rem, 1.7rem + 1.2vw, 2.5rem);
+  --type-subtitle-size: 1.75rem;
+  --type-heading-size: 1.125rem;
+  --type-body-size: 1rem;
+  --type-body-sm-size: 0.875rem;
+  --type-label-size: 0.75rem;
+
+  /* Motion (CA-7: zeroed under prefers-reduced-motion in globals.css). */
+  --duration-fast: 150ms;
+  --duration-base: 200ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* Layout. */
+  --page-gutter: 1rem;
+  --content-max: 72rem;
+  --measure: 68ch;
+  --target-min: 44px;
+}
+
+@media (min-width: 48rem) {
+  :root {
+    --page-gutter: 1.5rem;
+  }
+}
+
+@media (min-width: 64rem) {
+  :root {
+    --page-gutter: 2.5rem;
+  }
+}

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { SiteHeader } from "@/components/site-header";
 import { buildAlternates, type LocalizedPaths } from "@/i18n/alternates";
 import { defaultLocale, isLocale, locales } from "@/i18n/locales";
 import { getPathname } from "@/i18n/navigation";
@@ -25,12 +25,14 @@ export default async function Home({ params }: PageProps<"/[locale]">) {
   });
   return (
     <>
-      <header className="mx-auto flex w-full max-w-2xl justify-end px-4 pt-4">
-        <LocaleSwitcher paths={homePaths()} />
-      </header>
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col justify-center gap-4 px-4 py-16">
-        <h1 className="text-4xl font-semibold tracking-tight">Sijou</h1>
-        <p className="text-lg leading-relaxed">{t("tagline")}</p>
+      <SiteHeader paths={homePaths()} />
+      <main
+        id="main"
+        tabIndex={-1}
+        className="page-gutter mx-auto flex w-full max-w-(--content-max) flex-1 flex-col justify-center gap-4 py-16"
+      >
+        <h1 className="type-display text-brand">Sijou</h1>
+        <p className="type-body measure text-ink-muted">{t("tagline")}</p>
       </main>
     </>
   );

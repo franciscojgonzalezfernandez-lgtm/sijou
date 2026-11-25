@@ -12,7 +12,7 @@ export async function LocaleSwitcher({ paths }: { paths: LocalizedPaths }) {
   const t = await getTranslations("LocaleSwitcher");
   return (
     <nav aria-label={t("label")}>
-      <ul className="flex gap-3 text-sm">
+      <ul className="flex flex-wrap gap-1 font-sans text-sm">
         {locales.map((locale) => (
           <li key={locale}>
             {}
@@ -21,10 +21,11 @@ export async function LocaleSwitcher({ paths }: { paths: LocalizedPaths }) {
               hrefLang={locale}
               lang={locale}
               aria-current={locale === current ? "true" : undefined}
+              // F-004 CA-4: 44px targets.
               className={
                 locale === current
-                  ? "font-semibold underline underline-offset-4"
-                  : "underline-offset-4 hover:underline"
+                  ? "text-ink inline-flex min-h-11 items-center px-2 font-semibold underline underline-offset-4"
+                  : "text-accent-ink inline-flex min-h-11 items-center px-2 underline-offset-4 hover:underline"
               }
             >
               {t(locale)}

@@ -31,7 +31,7 @@ Resumen de la presentación de marca que entregó la clienta (24-11-2026) y de l
 - **Color** con moderación: el lino domina, el oliva marca las acciones y los titulares, el marrón tierra aparece en pocos detalles (promociones, etiquetas, foco).
 - **Iconos** de trazo fino (1,5 px), sin relleno.
 - **Movimiento** mínimo: fundidos cortos (150–200 ms). Nada se mueve con `prefers-reduced-motion`.
-- **Logotipo** "Maison natur" en serif, verde bosque `#33421E`.
+- **Logotipo** "Maison natur" en serif, verde bosque `#33421E`. Cuatro propuestas en vector (25-11-2026), en la guía privada: **Firma** (el actual, solo letras), **Hoja** (la «i» lleva una hoja de olivo en marrón tierra), **Rama** (rama de olivo junto al nombre) y **Arco** (arco con las iniciales «Mn» y sello para etiquetas). Hasta que la clienta elija, la web usa Firma.
 
 ## Paleta elegida: oliva, lino y marrón tierra
 

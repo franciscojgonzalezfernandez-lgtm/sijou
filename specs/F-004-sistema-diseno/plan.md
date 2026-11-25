@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Propuesto (24-11-2026) · pendiente de aprobación |
+| Estado | Aprobado (25-11-2026) |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Marca | [docs/brand](../../docs/brand/README.md): paleta oliva, lino y marrón tierra elegida por la clienta |
 | Rama | `feat/F-004-sistema-diseno` |
@@ -110,6 +110,13 @@ Todos en `src/components/ui/`, sin textos propios: reciben los textos ya traduci
 | `SkipLink` | `<a href="#main">` | Primer elemento con foco; visible al recibirlo |
 
 Además: `forced-colors: active` mantiene bordes y foco con colores del sistema (caso límite de la spec).
+
+## Logotipo (CA-10)
+
+- Propuestas en la guía privada de marca (fuera del repositorio): **Firma** (solo letras, la actual), **Hoja** (la «i» con una hoja de olivo en marrón tierra), **Rama** (rama de olivo + nombre) y **Arco** (arco con las iniciales «Mn» + nombre, y sello para impresión).
+- `src/components/brand/Logo.tsx`: SVG en línea con `role="img"` y `aria-label="Maison natur"` (nombre propio, igual en los tres idiomas), color por `currentColor` para servir en verde bosque o en lino claro. Variantes `wordmark` (cabecera) y `mark` (icono). Dentro de un enlace a inicio, el enlace toma el nombre del SVG.
+- Mientras la clienta elige se usa **Firma**, con las letras dibujadas en Cormorant Garamond (la fuente ya cargada). El SVG definitivo, con las letras convertidas en trazos, sustituye al provisional sin cambiar la API del componente.
+- `src/app/icon.svg` y `src/app/apple-icon.png` (convención de archivos de Next): favicon e icono de app desde la variante `mark`. Se borra `favicon.ico`, que es el de la plantilla.
 
 ## Rutas, acciones y contratos
 

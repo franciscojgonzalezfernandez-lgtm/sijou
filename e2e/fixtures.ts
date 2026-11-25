@@ -25,8 +25,14 @@ export async function visit(
   await page.waitForLoadState("load");
   if (options.ready) await options.ready(page).waitFor();
   // Audit the settled page: mid-fade elements report false colour-contrast failures.
+  // Infinite animations (skeleton pulse, spinners) never finish, so they are not awaited.
   await page.evaluate(() =>
-    Promise.all(document.getAnimations().map((animation) => animation.finished.catch(() => null))),
+    Promise.all(
+      document
+        .getAnimations()
+        .filter((animation) => animation.effect?.getTiming().iterations !== Infinity)
+        .map((animation) => animation.finished.catch(() => null)),
+    ),
   );
   const { violations } = await new AxeBuilder({ page }).withTags(AXE_TAGS).analyze();
   expect(
