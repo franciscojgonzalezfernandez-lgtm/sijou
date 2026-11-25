@@ -2,11 +2,12 @@ import { cx } from "@/components/ui/cx";
 
 import { LEAF, LEAVES, leafTransform, SPRIG_BOX, SPRIG_STEM } from "./sprig";
 
-/** The brand name: a proper noun, the same in every language, with a capital N. */
-export const BRAND_NAME = "Maison Natur";
+/** The brand name: a proper noun, the same in every language, always with the circumflex. */
+export const BRAND_NAME = "Sijôu";
 
-// Cormorant Garamond 500 at 88 units: "Maison Natur" measures 480.5 units wide.
-const WORD = { size: 88, width: 481 } as const;
+// Cormorant Garamond 500 at 88 units: "Sijôu" measures 176.5 units wide; the j descends 25 below
+// the baseline.
+const WORD = { size: 88, width: 177 } as const;
 
 function Sprig({ x = 0, y = 0 }: { x?: number; y?: number }) {
   return (
@@ -53,7 +54,7 @@ export function Logo({
 }: {
   variant?: LogoVariant;
   className?: string;
-  /** True when a link or text next to it already says "Maison Natur". */
+  /** True when a link or text next to it already says the brand name. */
   decorative?: boolean;
 }) {
   const a11y = decorative
@@ -65,7 +66,7 @@ export function Logo({
     return (
       <svg
         viewBox={`0 0 ${SPRIG_BOX.width} ${SPRIG_BOX.height}`}
-        className={cx("block h-auto", className)}
+        className={cx("block", className)}
         {...a11y}
       >
         <Sprig />
@@ -75,7 +76,7 @@ export function Logo({
   if (variant === "stacked") {
     const width = WORD.width + 8;
     return (
-      <svg viewBox={`0 0 ${width} 222`} className={cx("block h-auto", className)} {...a11y}>
+      <svg viewBox={`0 0 ${width} 234`} className={cx("block", className)} {...a11y}>
         <Sprig x={(width - SPRIG_BOX.width) / 2} />
         <Word x={width / 2} y={124 + gap + 64} anchor="middle" />
       </svg>
@@ -84,7 +85,7 @@ export function Logo({
   return (
     <svg
       viewBox={`0 0 ${SPRIG_BOX.width + gap + WORD.width + 4} ${SPRIG_BOX.height}`}
-      className={cx("block h-auto", className)}
+      className={cx("block", className)}
       {...a11y}
     >
       <Sprig />

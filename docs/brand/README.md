@@ -4,7 +4,7 @@ Resumen de la presentación de marca que entregó la clienta (24-11-2026) y de l
 
 **Estado:** cerrada el 24-11-2026. La clienta eligió **oliva, lino y marrón tierra**.
 
-**Nombre de la marca:** «Maison Natur», siempre con la N mayúscula. «Sijou» es solo el nombre interno del proyecto.
+**Nombre de la marca:** «Sijôu», siempre con la ô (circunflejo). Sustituye a «Maison Natur» (25-11-2026). «sijou», sin acento, queda como nombre técnico del proyecto (paquete, base de datos, dominios).
 
 ## Personalidad
 

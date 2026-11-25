@@ -15,7 +15,7 @@ export async function SiteHeader({ paths }: { paths: LocalizedPaths }) {
         aria-label={t("home")}
         className="text-brand -mx-1 inline-flex min-h-11 items-center px-1"
       >
-        <Logo decorative className="w-40 sm:w-48" />
+        <Logo decorative className="h-11 w-auto sm:h-12" />
       </Link>
       <LocaleSwitcher paths={paths} />
     </header>

@@ -22,7 +22,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 | N-01 | Comprar el dominio y configurar el DNS | Técnico | F-002, F-006 | ⬜ |
 | N-02 | Cuenta de Stripe (CH), verificación y alta de TWINT | Clienta | F-032 | ⬜ |
 | N-03 | Equipo Vercel Pro (propiedad de la clienta) e invitación al técnico. Migrado el 25-11-2026: proyecto `sijou` en el equipo de la clienta, con su propia base de datos Neon (Frankfurt) y su almacén de fotos | Clienta | Lanzamiento | ✅ |
-| N-04 | Identidad de marca: logo, colores, tipografías, fotos. Paleta, tipografía y personalidad cerradas el 24-11-2026 ([docs/brand](../docs/brand/README.md)). Logotipo «Rama» y nombre «Maison Natur» elegidos (25-11-2026); falta la versión con letras en trazos para impresión. Faltan las fotos de producto | Clienta | F-004, F-020 | 🔨 |
+| N-04 | Identidad de marca: logo, colores, tipografías, fotos. Paleta, tipografía y personalidad cerradas el 24-11-2026 ([docs/brand](../docs/brand/README.md)). Logotipo «Rama» y nombre «Sijôu» elegidos (25-11-2026); falta la versión con letras en trazos para impresión. Faltan las fotos de producto | Clienta | F-004, F-020 | 🔨 |
 | N-05 | Estudio de competidores y palabras clave por mercado (RF-SEO-08) | Técnico + clienta | F-025, F-051 | ⬜ |
 | N-06 | Textos legales y revisión jurídica (PRD §7) | Clienta + asesor | F-053 | ⬜ |
 | N-07 | Cerrar los temas abiertos del PRD (TA-01…TA-16) | Clienta + técnico | Según el TA | ⬜ |
