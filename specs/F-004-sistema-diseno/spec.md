@@ -26,7 +26,7 @@ Un conjunto de tokens y componentes base, accesibles y pensados primero para mó
 - **CA-7** Se respeta `prefers-reduced-motion`.
 - **CA-8** Las fuentes son locales o servidas por nosotros, cargadas sin bloquear el renderizado y sin saltos de diseño (CLS).
 - **CA-9** Hay una página interna de catálogo de componentes, no indexada, con las pruebas de axe.
-- **CA-10** El logotipo es un SVG con nombre accesible «Maison Natur», enlaza a la página de inicio desde la cabecera y tiene versión en verde bosque y en lino claro. Hay favicon e icono de app (`apple-touch-icon`) derivados de él.
+- **CA-10** El logotipo es un SVG con nombre accesible «Sijôu», enlaza a la página de inicio desde la cabecera y tiene versión en verde bosque y en lino claro. Hay favicon e icono de app (`apple-touch-icon`) derivados de él.
 
 ## Estrategia de pruebas
 - Unitarias: cálculo del contraste de los tokens (falla si un par baja del mínimo).
@@ -39,4 +39,4 @@ Un conjunto de tokens y componentes base, accesibles y pensados primero para mó
 - Modo oscuro: ni en el MVP ni más adelante.
 
 ## Dudas
-- Ninguna. La clienta eligió el logotipo «Rama» y el nombre definitivo «Maison Natur», con N mayúscula (25-11-2026).
+- Ninguna. La clienta eligió el logotipo «Rama» y el nombre definitivo «Sijôu», con ô (25-11-2026; sustituye a «Maison Natur»).
