@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations } from "next-intl/server";
 
-import { LocaleSwitcher } from "@/components/locale-switcher";
+import { SiteHeader } from "@/components/site-header";
 import { buildAlternates, type LocalizedPaths } from "@/i18n/alternates";
 import { formatPrice } from "@/i18n/formats";
 import { isLocale, locales, type Locale } from "@/i18n/locales";
@@ -53,7 +53,7 @@ function Detail({ label, value }: { label: string; value: string | null }) {
   if (!value?.trim()) return null;
   return (
     <div>
-      <dt className="font-semibold">{label}</dt>
+      <dt className="type-heading">{label}</dt>
       <dd className="mt-1 whitespace-pre-line">{value}</dd>
     </div>
   );
@@ -68,13 +68,12 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/produ
 
   return (
     <>
-      <header className="mx-auto flex w-full max-w-2xl items-center justify-between gap-4 px-4 pt-4">
-        <a href={getPathname({ locale, href: "/" })} className="underline-offset-4 hover:underline">
-          {t("backHome")}
-        </a>
-        <LocaleSwitcher paths={productPaths(product.slugs)} />
-      </header>
-      <main className="mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 px-4 py-10">
+      <SiteHeader paths={productPaths(product.slugs)} />
+      <main
+        id="main"
+        tabIndex={-1}
+        className="page-gutter mx-auto flex w-full max-w-2xl flex-1 flex-col gap-6 py-10"
+      >
         {product.image && (
           // F-010 D-2: Payload already generates WebP sizes; Vercel image optimization would use quota.
           // eslint-disable-next-line @next/next/no-img-element
@@ -86,27 +85,27 @@ export default async function ProductPage({ params }: PageProps<"/[locale]/produ
             height={product.image.height}
             alt={product.image.alt}
             fetchPriority="high"
-            className="h-auto w-full rounded-lg bg-neutral-100"
+            className="bg-surface h-auto w-full rounded-md"
           />
         )}
-        <h1 className="text-3xl font-semibold tracking-tight">{product.name}</h1>
+        <h1 className="type-title text-brand">{product.name}</h1>
         {product.price !== null && (
-          <p className="text-xl">
+          <p className="type-heading tabular">
             <span className="sr-only">{t("price")}: </span>
             {formatPrice(product.price, locale)}
           </p>
         )}
         {product.shortDescription && (
-          <p className="text-lg leading-relaxed">{product.shortDescription}</p>
+          <p className="type-body measure">{product.shortDescription}</p>
         )}
         {product.description && (
-          <div className="flex flex-col gap-4 leading-relaxed">
+          <div className="type-body measure flex flex-col gap-4">
             <RichText data={product.description} />
           </div>
         )}
         {hasDetails && (
           <section aria-labelledby="details" className="flex flex-col gap-4">
-            <h2 id="details" className="text-xl font-semibold">
+            <h2 id="details" className="type-subtitle text-brand">
               {t("details")}
             </h2>
             <dl className="flex flex-col gap-4">

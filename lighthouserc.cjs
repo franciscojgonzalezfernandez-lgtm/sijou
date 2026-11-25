@@ -11,10 +11,15 @@ const PRODUCT_PATHS = [
   "/es/productos/crema-facial-de-lavanda",
 ];
 const withProducts = process.env.DEPLOY_ENV !== "Production";
+// F-004 CA-9: the component catalogue is noindex, so it is only audited where is-crawlable is
+// skipped (deployed URLs, below).
+const CATALOG_PATHS = ["/en/catalog", "/de/katalog", "/es/catalogo"];
 const urlsFor = (base) =>
-  [...LOCALES.map((l) => `/${l}`), ...(withProducts ? PRODUCT_PATHS : [])].map((path) =>
-    new URL(path, base).toString(),
-  );
+  [
+    ...LOCALES.map((l) => `/${l}`),
+    ...(withProducts ? PRODUCT_PATHS : []),
+    ...(url ? CATALOG_PATHS : []),
+  ].map((path) => new URL(path, base).toString());
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
 
 module.exports = {

@@ -4,6 +4,8 @@ Resumen de la presentación de marca que entregó la clienta (24-11-2026) y de l
 
 **Estado:** cerrada el 24-11-2026. La clienta eligió **oliva, lino y marrón tierra**.
 
+**Nombre de la marca:** «Maison Natur», siempre con la N mayúscula. «Sijou» es solo el nombre interno del proyecto.
+
 ## Personalidad
 
 **Lujo sereno y natural.** Una casa de cosmética botánica, perfumes y velas hechos a mano. Lo valioso está en la materia prima, el oficio y la calma, no en el brillo.
@@ -31,7 +33,7 @@ Resumen de la presentación de marca que entregó la clienta (24-11-2026) y de l
 - **Color** con moderación: el lino domina, el oliva marca las acciones y los titulares, el marrón tierra aparece en pocos detalles (promociones, etiquetas, foco).
 - **Iconos** de trazo fino (1,5 px), sin relleno.
 - **Movimiento** mínimo: fundidos cortos (150–200 ms). Nada se mueve con `prefers-reduced-motion`.
-- **Logotipo** "Maison natur" en serif, verde bosque `#33421E`.
+- **Logotipo** «Rama», elegido por la clienta el 25-11-2026 entre cuatro propuestas (Firma, Hoja, Rama y Arco): una rama de olivo de trazo fino junto al nombre en Cormorant Garamond, verde bosque `#33421E`. Versiones horizontal (cabecera), apilada (espacios grandes) y la rama sola (favicon e icono de app). En la web vive en `src/components/brand/`.
 
 ## Paleta elegida: oliva, lino y marrón tierra
 
