@@ -38,7 +38,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 | [F-001](./F-001-repo-calidad/spec.md) | **Repo y calidad**: TypeScript estricto, lint, formato, Vitest, Playwright + axe, CI en GitHub Actions, **Lighthouse CI con puerta ≥ 90 × 4** | RNF-11, RNF-15 | — | P0 | ✅ |
 | [F-002](./F-002-esqueleto-app/spec.md) | **Esqueleto de la app**: Next.js + Payload 3 + Neon (Frankfurt) + Vercel (fra1), ramas de Neon por preview, variables de entorno | ADR-02/03 | F-001 | P0 | ✅ |
 | [F-003](./F-003-i18n-base/spec.md) | **i18n base**: next-intl, rutas `/[locale]`, detección del idioma del navegador, EN por defecto, selector, mapa de slugs traducidos | RF-I18N | F-002 | P0 | ✅ |
-| [F-004](./F-004-sistema-diseno/spec.md) | **Sistema de diseño accesible**: tokens, paleta AA/AAA, tipografía, componentes base (botón, campo, diálogo, toast, skeleton) | RNF-03 | F-002, N-04 | P0 | 🔨 |
+| [F-004](./F-004-sistema-diseno/spec.md) | **Sistema de diseño accesible**: tokens, paleta AA/AAA, tipografía, componentes base (botón, campo, diálogo, toast, skeleton) | RNF-03 | F-002, N-04 | P0 | ✅ |
 | [F-005](./F-005-observabilidad/spec.md) | **Observabilidad**: Sentry (UE), Vercel Analytics y Speed Insights | ADR-12 | F-002 | P0 | 📝 |
 | [F-006](./F-006-emails/spec.md) | **Emails transaccionales**: Resend, dominio autenticado (SPF, DKIM, DMARC), cola de envíos con reintentos (cron), plantillas React Email en 3 idiomas | RNF-13, ADR-07 | F-002, N-01 | P0 | 📝 |
 | [F-007](./F-007-autenticacion/spec.md) | **Autenticación**: Better Auth (Google, Apple, email y contraseña, verificación, recuperación), roles cliente y admin, acceso al panel | RF-CLI-02, RF-ADM-01 | F-002, F-006 | P0 | 📝 |
