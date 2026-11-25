@@ -74,6 +74,17 @@ jobs:
           node-version-file: .nvmrc
           cache: pnpm
       - run: pnpm install --frozen-lockfile
+      # A fresh deployment serves its first requests from a cold edge cache and cold functions;
+      # request every audited URL (and robots.txt) once so Lighthouse measures the warm site.
+      # Fail-safe: the audit itself decides pass or fail.
+      - name: Warm up the deployment
+        run: |
+          node -e 'const u = require("./lighthouserc.cjs").ci.collect.url; console.log([...u, new URL("/robots.txt", u[0]).href].join("\n"))' |
+          while read -r url; do
+            curl -sS -o /dev/null --max-time 20 \
+              -H "x-vercel-protection-bypass: ${VERCEL_AUTOMATION_BYPASS_SECRET}" \
+              -w "%{http_code} %{time_total}s ${url}\n" "$url" || echo "warm-up failed: $url"
+          done
       - run: pnpm exec lhci autorun
       - name: Comment report links on the PR
         if: always()
