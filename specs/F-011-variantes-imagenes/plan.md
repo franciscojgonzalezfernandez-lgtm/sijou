@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobado (26-11-2026), con D-1…D-4 como se propusieron |
+| Estado | Implementado (27-11-2026); aprobado el 26-11-2026 con D-1…D-4 como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-011-variantes-imagenes` |
 
@@ -177,3 +177,4 @@ Ninguna. `@vercel/blob` ya viene con `@payloadcms/storage-vercel-blob`. Si hace 
   - CSS: contraste de «Añadir …» y de los metadatos de la foto, y 24 px en esos botones y en el desplegable de la navegación.
 - **Datos de prueba:** el producto de ejemplo pasa a la galería, sin atributos (una variante por defecto). La E2E crea su propio producto con 2 × 2 atributos.
 - **Error de EAN en el panel:** Payload devuelve el error del campo como «El siguiente campo es inválido: EAN». La E2E comprueba ese rechazo por la API; la edición correcta de la variante se prueba en el formulario.
+- **E2E contra previews protegidos (27-11-2026):** las cabeceras `x-vercel-*` que Playwright enviaba en todas las peticiones rompían el CORS de la subida directa a `vercel.com/api/blob` y mandaban el secreto a otro dominio. El navegador pasa ahora la protección con la cookie de Vercel (`x-vercel-set-bypass-cookie`), que solo va a nuestro dominio, y la cabecera que oculta la barra de Vercel solo se añade a nuestras páginas (`e2e/fixtures.ts`). El paso de subida directa no se ejecuta en el WebKit de Playwright para Linux, que no consigue hacer ese PUT; el WebKit de macOS sí lo hace y Chromium lo cubre en el preview.
