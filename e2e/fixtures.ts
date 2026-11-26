@@ -16,11 +16,9 @@ export { expect };
  * to our origin, and our own pages get the header that hides the Vercel toolbar.
  */
 /**
- * Our own pages ask Vercel not to inject its toolbar. A route makes WebKit intercept every request,
- * and intercepted cross-origin CORS requests fail there: steps that upload straight to Vercel Blob
- * call `context.unrouteAll()` first and this again afterwards.
+ * Our own pages ask Vercel not to inject its toolbar.
  */
-export async function hideVercelToolbar(context: BrowserContext, origin: string): Promise<void> {
+async function hideVercelToolbar(context: BrowserContext, origin: string): Promise<void> {
   await context.route(
     (url) => url.origin === origin,
     (route) =>
