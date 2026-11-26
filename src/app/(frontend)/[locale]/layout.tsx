@@ -12,14 +12,16 @@ import "../globals.css";
 
 // F-004 CA-8: fonts are downloaded at build time and served from our domain, with metric-matched
 // fallbacks so swapping them in does not shift the layout. Only the weights in use are loaded.
+// `subsets` only picks what is preloaded: the latin-ext faces stay in the CSS (unicode-range) and
+// load on demand. Preloading only latin keeps the fonts from competing with the LCP image on mobile.
 const cormorant = Cormorant_Garamond({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   weight: ["500", "600"],
   display: "swap",
   variable: "--font-cormorant",
 });
 const montserrat = Montserrat({
-  subsets: ["latin", "latin-ext"],
+  subsets: ["latin"],
   display: "swap",
   variable: "--font-montserrat",
 });

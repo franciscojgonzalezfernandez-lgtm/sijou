@@ -113,9 +113,9 @@ Además: `forced-colors: active` mantiene bordes y foco con colores del sistema 
 
 ## Logotipo (CA-10)
 
-- La clienta eligió **Rama** (25-11-2026) entre cuatro propuestas (Firma, Hoja, Rama, Arco): una rama de olivo de trazo fino junto al nombre. Nombre definitivo de la marca: **Maison Natur**, con N mayúscula.
+- La clienta eligió **Rama** (25-11-2026) entre cuatro propuestas (Firma, Hoja, Rama, Arco): una rama de olivo de trazo fino junto al nombre. Nombre definitivo de la marca: **Sijôu**, con ô (25-11-2026; sustituye a «Maison Natur»).
 - `src/components/brand/sprig.ts`: geometría de la rama (tallo y ocho hojas), única fuente para el logotipo, el favicon y el icono de app.
-- `src/components/brand/logo.tsx`: SVG en línea con `role="img"` y `aria-label="Maison Natur"` (nombre propio, igual en los tres idiomas), color por `currentColor` para servir en verde bosque o en lino claro. Variantes `horizontal` (cabecera), `stacked` (espacios grandes) y `mark` (la rama sola). El nombre se dibuja con Cormorant Garamond, que la página ya carga; el marco del SVG está medido sobre esa fuente. En la cabecera, el enlace a inicio lleva el nombre y el SVG es decorativo.
+- `src/components/brand/logo.tsx`: SVG en línea con `role="img"` y `aria-label="Sijôu"` (nombre propio, igual en los tres idiomas), color por `currentColor` para servir en verde bosque o en lino claro. Variantes `horizontal` (cabecera), `stacked` (espacios grandes) y `mark` (la rama sola). El nombre se dibuja con Cormorant Garamond, que la página ya carga; el marco del SVG está medido sobre esa fuente. En la cabecera, el enlace a inicio lleva el nombre y el SVG es decorativo.
 - `src/app/icon.tsx` (SVG) y `src/app/apple-icon.tsx` (PNG 180×180): la rama inclinada sobre lino y sobre oliva, con el tallo más grueso para que se lea a 16 px.
 - Pendiente para impresión (N-04): versión con las letras convertidas en trazos, que no dependa de la fuente.
 

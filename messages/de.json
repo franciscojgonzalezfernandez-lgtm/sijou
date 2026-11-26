@@ -1,7 +1,7 @@
 {
   "Metadata": {
-    "title": "Maison Natur — Naturkosmetik",
-    "description": "Naturkosmetik von Maison Natur. Unser Onlineshop öffnet bald, mit handgemachten Produkten aus der Schweiz."
+    "title": "Sijôu — Naturkosmetik",
+    "description": "Naturkosmetik von Sijôu. Unser Onlineshop öffnet bald, mit handgemachten Produkten aus der Schweiz."
   },
   "Home": {
     "tagline": "Naturkosmetik, bald online. Wir bereiten unseren Onlineshop vor."
@@ -30,7 +30,7 @@
   "Common": {
     "skipToContent": "Zum Inhalt springen",
     "close": "Schließen",
-    "home": "Maison Natur, Startseite"
+    "home": "Sijôu, Startseite"
   },
   "Catalog": {
     "metaTitle": "Komponentenkatalog",

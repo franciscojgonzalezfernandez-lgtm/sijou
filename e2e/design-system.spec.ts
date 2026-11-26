@@ -27,9 +27,9 @@ test.describe("component catalogue", () => {
     page,
   }) => {
     await visit(page, CATALOG.es);
-    const logo = page.getByRole("banner").getByRole("link", { name: "Maison Natur, inicio" });
+    const logo = page.getByRole("banner").getByRole("link", { name: "Sijôu, inicio" });
     await expect(logo).toBeVisible();
-    await expect(page.getByRole("img", { name: "Maison Natur" }).first()).toBeVisible();
+    await expect(page.getByRole("img", { name: "Sijôu" }).first()).toBeVisible();
     await expect(page.locator('link[rel="icon"]').first()).toHaveAttribute("href", /icon/);
     await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute(
       "href",
