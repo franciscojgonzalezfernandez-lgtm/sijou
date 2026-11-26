@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Propuesto (26-11-2026), pendiente de aprobación |
+| Estado | Aprobado (26-11-2026), con D-1…D-4 como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-011-variantes-imagenes` |
 
@@ -138,7 +138,7 @@ Ninguna. `@vercel/blob` ya viene con `@payloadcms/storage-vercel-blob`. Si hace 
   - Los atributos son tres fijos, sin un sistema de atributos genérico.
   - La galería es un array de Payload y no una colección nueva.
 
-## Dudas (decisiones que propongo; confirmar al aprobar)
+## Dudas (resueltas el 26-11-2026: todas como se propusieron)
 - **D-1: dónde se asigna una foto a sus variantes.**
   - *Propuesta:* en la galería del producto. Cada fila es una foto con casillas de variantes. Se ve todo en un sitio y se reordena en el mismo lugar (HU-2). El coste es cambiar `images` por `gallery`, con una migración que copia los datos.
   - *Alternativa:* cada variante elige sus fotos de entre las del producto. No hace falta migración, pero hay que abrir cada variante para asignar.
@@ -162,3 +162,18 @@ Ninguna. `@vercel/blob` ya viene con `@payloadcms/storage-vercel-blob`. Si hace 
 | La migración de `images` a `gallery` pierde el orden | Se copia con la columna `order` de `products_rels`, y una prueba de la migración en local compara el antes y el después con el producto de prueba |
 | El índice único con atributos vacíos (`NULL`) no detecta duplicados | Valores vacíos como `''` o, si no encaja, la comprobación del hook es la que manda |
 | axe en las pantallas nuevas del panel (arrays anidados de Payload) | Mismo criterio que en F-010: se arreglan, con componentes propios, CSS o parches, sin excepciones |
+
+## Notas de la implementación (26-11-2026)
+- **Combinación única:** no hay índice único en la base de datos. Postgres trata los vacíos como distintos y el hook de `variants` ya rechaza combinaciones repetidas, así que la regla vive solo en el servidor.
+- **Aviso al quitar un atributo o un valor:** las variantes afectadas se desactivan en el `afterChange` del producto. El aviso sale en el bloque «Para publicar» («Variantes desactivadas (n): SKU…»), porque Payload no tiene avisos tras guardar.
+- **Generar variantes:** tras crearlas, la página se recarga para que la lista de variantes y las casillas de cada foto las incluyan. El mensaje de resultado se guarda en `sessionStorage` y se muestra después de recargar.
+- **Límite de 10 fotos:** el panel oculta «Añadir Foto» al llegar a 10 (`maxRows`). La API lo rechaza con su propio mensaje («Máximo 10 fotos por producto.») desde un hook `beforeValidate`, porque el error de un campo solo diría que «Fotos» no es válido.
+- **10 MB:** el navegador lo comprueba antes de subir (parche del gestor de subida del plugin de Blob). Las subidas que pasan por el servidor (local, API) se comprueban en `beforeOperation` sobre el fichero original, antes de convertirlo a WebP.
+- **Barra de progreso:** parche mínimo de `@payloadcms/storage-vercel-blob` que pasa `onUploadProgress` y emite el evento `sijou:upload-progress`; el campo `UploadProgress` de `media` lo muestra con `<progress>` y un anuncio cada 25 %. Solo existe en Vercel (subida directa); en local la subida pasa por el servidor sin progreso.
+- **Accesibilidad del panel (sin excepciones, como en F-010):**
+  - Campos propios: `VariantValueSelect` (atributos de la variante), `ProductReference` (producto de la variante, en lugar del react-select sin etiqueta).
+  - `CheckboxRelationship` gana `admin.custom.sameDocument` para listar solo las variantes del producto.
+  - Parche de `@payloadcms/ui`: nombre accesible para el menú de cada fila de un array, el menú copiar/pegar del array y el asa de arrastre («Mover»).
+  - CSS: contraste de «Añadir …» y de los metadatos de la foto, y 24 px en esos botones y en el desplegable de la navegación.
+- **Datos de prueba:** el producto de ejemplo pasa a la galería, sin atributos (una variante por defecto). La E2E crea su propio producto con 2 × 2 atributos.
+- **Error de EAN en el panel:** Payload devuelve el error del campo como «El siguiente campo es inválido: EAN». La E2E comprueba ese rechazo por la API; la edición correcta de la variante se prueba en el formulario.

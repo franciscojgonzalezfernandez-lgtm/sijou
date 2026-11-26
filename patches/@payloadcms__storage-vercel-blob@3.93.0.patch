@@ -1,0 +1,35 @@
+diff --git a/dist/client/VercelBlobClientUploadHandler.js b/dist/client/VercelBlobClientUploadHandler.js
+index c5dabfa2a976121d8ee34a22c6c66f8ec582eed3..4a479a7ee54e2f919458f38654450e9bb5831569 100644
+--- a/dist/client/VercelBlobClientUploadHandler.js
++++ b/dist/client/VercelBlobClientUploadHandler.js
+@@ -4,6 +4,17 @@ import { upload } from '@vercel/blob/client';
+ import { formatAdminURL } from 'payload/shared';
+ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+     handler: async ({ apiRoute, collectionSlug, docPrefix, file, serverHandlerPath, serverURL, updateFilename })=>{
++        // Sijou F-011 CA-7: photos up to 10 MB, checked before anything is uploaded.
++        if (file.size > 10 * 1024 * 1024) {
++            throw new Error('La foto supera los 10 MB. Redúcela y vuelve a subirla.');
++        }
++        const progress = (percentage)=>window.dispatchEvent(new CustomEvent('sijou:upload-progress', {
++                detail: {
++                    name: file.name,
++                    percentage
++                }
++            }));
++        progress(0);
+         const endpointRoute = formatAdminURL({
+             apiRoute,
+             path: serverHandlerPath,
+@@ -35,8 +46,11 @@ export const VercelBlobClientUploadHandler = createClientUploadHandler({
+                 signedReceipt: clientUploadContext.signedReceipt
+             }),
+             contentType: file.type,
+-            handleUploadUrl: endpointRoute
++            handleUploadUrl: endpointRoute,
++            // Sijou F-011 CA-7: progress for the admin's progress bar.
++            onUploadProgress: ({ percentage })=>progress(percentage)
+         });
++        progress(100);
+         return {
+             prefix: clientUploadContext.prefix,
+             signedReceipt: clientUploadContext.signedReceipt

@@ -10,4 +10,5 @@ minimumReleaseAge: 20160
 
 patchedDependencies:
   "@payloadcms/next@3.93.0": patches/@payloadcms__next@3.93.0.patch
+  "@payloadcms/storage-vercel-blob@3.93.0": patches/@payloadcms__storage-vercel-blob@3.93.0.patch
   "@payloadcms/ui@3.93.0": patches/@payloadcms__ui@3.93.0.patch

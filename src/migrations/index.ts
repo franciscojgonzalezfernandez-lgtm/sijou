@@ -1,5 +1,7 @@
 import * as migration_20261123_214301_initial from './20261123_214301_initial';
 import * as migration_20261124_021434_products from './20261124_021434_products';
+import * as migration_20261126_213452_variants_gallery from './20261126_213452_variants_gallery';
+import * as migration_20261126_213645_media_thumbnail from './20261126_213645_media_thumbnail';
 
 export const migrations = [
   {
@@ -10,6 +12,16 @@ export const migrations = [
   {
     up: migration_20261124_021434_products.up,
     down: migration_20261124_021434_products.down,
-    name: '20261124_021434_products'
+    name: '20261124_021434_products',
+  },
+  {
+    up: migration_20261126_213452_variants_gallery.up,
+    down: migration_20261126_213452_variants_gallery.down,
+    name: '20261126_213452_variants_gallery',
+  },
+  {
+    up: migration_20261126_213645_media_thumbnail.up,
+    down: migration_20261126_213645_media_thumbnail.down,
+    name: '20261126_213645_media_thumbnail'
   },
 ];
