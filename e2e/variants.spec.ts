@@ -391,8 +391,27 @@ test.describe("F-011 variants and photos in the admin", () => {
         .first()
         .setInputFiles(path.join(import.meta.dirname, "fixtures/sample-product.jpg"));
       await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+      // Diagnostics for the direct-to-storage path: say why the save never lands.
+      const notes: string[] = [];
+      page.on("console", (m) => {
+        if (m.type() === "error" || m.type() === "warning")
+          notes.push(`console ${m.type()}: ${m.text()}`);
+      });
+      page.on("pageerror", (e) => notes.push(`pageerror: ${e.message}`));
+      page.on("requestfailed", (r) =>
+        notes.push(`failed ${r.method()} ${r.url()}: ${r.failure()?.errorText}`),
+      );
+      page.on("response", (r) => {
+        if (/blob|\/api\/media/.test(r.url()))
+          notes.push(`${r.status()} ${r.request().method()} ${r.url()}`);
+      });
       await page.getByRole("button", { name: "Guardar" }).click();
-      await page.waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit" });
+      await page
+        .waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit", timeout: 45_000 })
+        .catch(async (error: unknown) => {
+          const toasts = await page.locator(".payload-toast-container").allTextContents();
+          throw new Error(`${String(error)}\ntoasts: ${toasts.join(" | ")}\n${notes.join("\n")}`);
+        });
       const uploaded = /media\/(\d+)/.exec(page.url())?.[1];
       // CA-8: WebP sizes exist, also for a file the server never received itself (previews).
       const media = await api<{ sizes: Record<string, { url?: string | null }> }>(
