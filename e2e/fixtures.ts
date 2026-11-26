@@ -1,7 +1,37 @@
 import AxeBuilder from "@axe-core/playwright";
-import { expect, type Locator, type Page } from "@playwright/test";
+import { test as base, expect, type Locator, type Page } from "@playwright/test";
 
-export { expect, test } from "@playwright/test";
+export { expect };
+
+/**
+ * Against protected Vercel previews the browser must not send the bypass headers everywhere:
+ * cross-origin requests (direct uploads to Vercel Blob, F-011 CA-7) fail CORS on them, and the
+ * secret would leave our deployment. The browser gets the bypass cookie instead, which only goes
+ * to our origin, and our own pages get the header that hides the Vercel toolbar.
+ */
+export const test = base.extend({
+  context: async ({ context, baseURL }, provide) => {
+    const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
+    if (secret && baseURL) {
+      const origin = new URL(baseURL).origin;
+      await context.setExtraHTTPHeaders({});
+      await context.request.get("/", {
+        headers: { "x-vercel-protection-bypass": secret, "x-vercel-set-bypass-cookie": "true" },
+        maxRedirects: 0,
+      });
+      await context.route(
+        (url) => url.origin === origin,
+        (route) =>
+          route.request().resourceType() === "document"
+            ? route.continue({
+                headers: { ...route.request().headers(), "x-vercel-skip-toolbar": "1" },
+              })
+            : route.continue(),
+      );
+    }
+    await provide(context);
+  },
+});
 
 /** WCAG 2.2 AA (constitution II). */
 const AXE_TAGS = ["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"];
