@@ -13,7 +13,8 @@ const email = process.env.SEED_ADMIN_EMAIL;
 const password = process.env.SEED_ADMIN_PASSWORD;
 const hasSampleData = process.env.DEPLOY_ENV !== "Production";
 const hasTestAdmin = hasSampleData && Boolean(email && password);
-// On Vercel previews photos go straight from the browser to Blob (CA-7); locally, through the server.
+// On Vercel previews photos go straight from the browser to Blob with progress (CA-7); locally,
+// through the server, without it.
 const directUploads = Boolean(process.env.BASE_URL);
 
 type Locale = "es" | "en" | "de";
@@ -370,46 +371,46 @@ test.describe("F-011 variants and photos in the admin", () => {
       expect(tooBig.ok()).toBe(false);
     });
 
-    // Direct uploads to Vercel Blob only exist on previews; locally photos go through the server.
-    if (directUploads) {
-      await test.step("CA-7: the browser uploads straight to storage with a progress bar", async () => {
-        await visit(page, "/admin/collections/media/create?locale=es", {
-          ready: (p) => p.locator('input[type="file"]').first(),
+    await test.step("CA-7: uploading a photo from the admin (on previews, straight to storage)", async () => {
+      await visit(page, "/admin/collections/media/create?locale=es", {
+        ready: (p) => p.getByRole("button", { name: "Guardar" }),
+      });
+      // The bar can come and go quickly: record that it appeared and every progress report.
+      await page.evaluate(() => {
+        const seen = { bar: false, reports: [] as number[] };
+        (window as unknown as { f011: typeof seen }).f011 = seen;
+        window.addEventListener("sijou:upload-progress", (event) => {
+          seen.reports.push((event as CustomEvent<{ percentage: number }>).detail.percentage);
         });
-        // The bar can come and go quickly: record that it appeared and every progress report.
-        await page.evaluate(() => {
-          const seen = { bar: false, reports: [] as number[] };
-          (window as unknown as { f011: typeof seen }).f011 = seen;
-          window.addEventListener("sijou:upload-progress", (event) => {
-            seen.reports.push((event as CustomEvent<{ percentage: number }>).detail.percentage);
-          });
-          new MutationObserver(() => {
-            if (document.querySelector(".upload-progress progress[aria-labelledby]"))
-              seen.bar = true;
-          }).observe(document.body, { childList: true, subtree: true });
-        });
-        await page
-          .locator('input[type="file"]')
-          .first()
-          .setInputFiles(path.join(import.meta.dirname, "fixtures/sample-product.jpg"));
-        await page.getByRole("button", { name: "Guardar" }).click();
-        await page.waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit" });
+        new MutationObserver(() => {
+          if (document.querySelector(".upload-progress progress[aria-labelledby]")) seen.bar = true;
+        }).observe(document.body, { childList: true, subtree: true });
+      });
+      await page
+        .locator('input[type="file"]')
+        .first()
+        .setInputFiles(path.join(import.meta.dirname, "fixtures/sample-product.jpg"));
+      await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+      await page.getByRole("button", { name: "Guardar" }).click();
+      await page.waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit" });
+      const uploaded = /media\/(\d+)/.exec(page.url())?.[1];
+      // CA-8: WebP sizes exist, also for a file the server never received itself (previews).
+      const media = await api<{ sizes: Record<string, { url?: string | null }> }>(
+        page.request,
+        "get",
+        `/api/media/${uploaded}?depth=0`,
+      );
+      expect(media.sizes.w480?.url).toMatch(/\.webp$/);
+      if (directUploads) {
+        // A client-side navigation keeps the window: the record survives the redirect.
         const seen = await page.evaluate(
           () => (window as unknown as { f011?: { bar: boolean; reports: number[] } }).f011,
         );
-        // A client-side navigation keeps the window: the record survives the redirect.
         expect(seen?.bar).toBe(true);
         expect(seen?.reports).toContain(100);
-        // CA-8: Payload still generates the WebP sizes for a file it never received itself.
-        const uploaded = /media\/(\d+)/.exec(page.url())?.[1];
-        const media = await api<{
-          mimeType: string;
-          sizes: Record<string, { url?: string | null }>;
-        }>(page.request, "get", `/api/media/${uploaded}?depth=0`);
-        expect(media.sizes.w480?.url).toMatch(/\.webp$/);
-        await api(page.request, "delete", `/api/media/${uploaded}`);
-      });
-    }
+      }
+      await api(page.request, "delete", `/api/media/${uploaded}`);
+    });
 
     await test.step("Edge case: removing a value switches its variants off, with a notice", async () => {
       const current = await api<{ options: Option[] }>(
