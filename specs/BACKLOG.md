@@ -55,7 +55,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 | [F-015](./F-015-packs/spec.md) | **Packs predefinidos**: componentes, stock calculado, descuento de los componentes al vender | RF-CAT-07 | F-013 | P0 | 📝 |
 | [F-016](./F-016-packaging/spec.md) | **Opciones de packaging** para el pedido | RF-CAT-08 | F-010 | P0 | 📝 |
 | [F-017](./F-017-promociones/spec.md) | **Promociones automáticas** (%, importe fijo; producto, categoría o colección; fechas) y **esquema de códigos de descuento** (sin interfaz) | RF-CHK-06/07 | F-012 | P0 | 📝 |
-| [F-018](./F-018-configuracion-auditoria/spec.md) | **Configuración y auditoría**: ajustes generales del panel, registro de auditoría | RF-ADM-03/04 | F-002 | P0 | 📝 |
+| [F-018](./F-018-configuracion-auditoria/spec.md) | **Configuración y auditoría**: ajustes generales del panel, registro de auditoría | RF-ADM-03/04 | F-002 | P0 | 📐 |
 
 ## Fase 2 — Tienda pública
 
