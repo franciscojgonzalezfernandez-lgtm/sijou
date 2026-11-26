@@ -1,5 +1,11 @@
 import AxeBuilder from "@axe-core/playwright";
-import { test as base, expect, type Locator, type Page } from "@playwright/test";
+import {
+  test as base,
+  expect,
+  type BrowserContext,
+  type Locator,
+  type Page,
+} from "@playwright/test";
 
 export { expect };
 
@@ -9,6 +15,23 @@ export { expect };
  * secret would leave our deployment. The browser gets the bypass cookie instead, which only goes
  * to our origin, and our own pages get the header that hides the Vercel toolbar.
  */
+/**
+ * Our own pages ask Vercel not to inject its toolbar. A route makes WebKit intercept every request,
+ * and intercepted cross-origin CORS requests fail there: steps that upload straight to Vercel Blob
+ * call `context.unrouteAll()` first and this again afterwards.
+ */
+export async function hideVercelToolbar(context: BrowserContext, origin: string): Promise<void> {
+  await context.route(
+    (url) => url.origin === origin,
+    (route) =>
+      route.request().resourceType() === "document"
+        ? route.continue({
+            headers: { ...route.request().headers(), "x-vercel-skip-toolbar": "1" },
+          })
+        : route.continue(),
+  );
+}
+
 export const test = base.extend({
   context: async ({ context, baseURL }, provide) => {
     const secret = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;
@@ -19,15 +42,7 @@ export const test = base.extend({
         headers: { "x-vercel-protection-bypass": secret, "x-vercel-set-bypass-cookie": "true" },
         maxRedirects: 0,
       });
-      await context.route(
-        (url) => url.origin === origin,
-        (route) =>
-          route.request().resourceType() === "document"
-            ? route.continue({
-                headers: { ...route.request().headers(), "x-vercel-skip-toolbar": "1" },
-              })
-            : route.continue(),
-      );
+      await hideVercelToolbar(context, origin);
     }
     await provide(context);
   },

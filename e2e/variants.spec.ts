@@ -6,7 +6,7 @@ import type { APIRequestContext, Page } from "@playwright/test";
 import sharp from "sharp";
 
 import { seedProductPaths } from "../scripts/seed-data";
-import { expect, test, visit } from "./fixtures";
+import { expect, hideVercelToolbar, test, visit } from "./fixtures";
 
 // F-011: variants and images. Admin flows need the seeded test admin (previews and local only).
 const email = process.env.SEED_ADMIN_EMAIL;
@@ -405,6 +405,8 @@ test.describe("F-011 variants and photos in the admin", () => {
         if (/blob|\/api\/media/.test(r.url()))
           notes.push(`${r.status()} ${r.request().method()} ${r.url()}`);
       });
+      // WebKit fails cross-origin uploads while any route is set (see hideVercelToolbar).
+      if (directUploads) await page.context().unrouteAll();
       await page.getByRole("button", { name: "Guardar" }).click();
       await page
         .waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit", timeout: 45_000 })
@@ -428,6 +430,8 @@ test.describe("F-011 variants and photos in the admin", () => {
         expect(seen?.bar).toBe(true);
         expect(seen?.reports).toContain(100);
       }
+      if (process.env.BASE_URL)
+        await hideVercelToolbar(page.context(), new URL(process.env.BASE_URL).origin);
       await api(page.request, "delete", `/api/media/${uploaded}`);
     });
 
