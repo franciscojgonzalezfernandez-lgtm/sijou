@@ -13,6 +13,7 @@ import { Media } from "./collections/Media";
 import { Products } from "./collections/Products";
 import { Users } from "./collections/Users";
 import { Variants } from "./collections/Variants";
+import { withExplicitSslMode } from "./db-url";
 import { contentLocales } from "./domain/products/readiness";
 import { serverEnv } from "./env";
 
@@ -49,7 +50,7 @@ export default buildConfig({
   secret: env.PAYLOAD_SECRET,
   typescript: { outputFile: path.resolve(dirname, "payload-types.ts") },
   db: postgresAdapter({
-    pool: { connectionString: env.DATABASE_URL, max: 5 },
+    pool: { connectionString: withExplicitSslMode(env.DATABASE_URL), max: 5 },
     // Schema changes only through versioned migrations (F-002 CA-5), never auto-push.
     push: false,
     migrationDir: path.resolve(dirname, "migrations"),
