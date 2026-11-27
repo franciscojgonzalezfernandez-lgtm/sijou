@@ -163,9 +163,37 @@ export interface Product {
     [k: string]: unknown;
   } | null;
   /**
-   * La primera es la principal.
+   * Hasta 10. La primera es la principal. Reordénalas arrastrando o con el menú de cada foto. Marca las variantes que muestra cada foto; sin marcar, vale para todas.
    */
-  images?: (number | Media)[] | null;
+  gallery?:
+    | {
+        image: number | Media;
+        variants?: (number | Variant)[] | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Tamaño, aroma o color: de 0 a 3. Sin atributos, el producto tiene una sola variante. Si quitas un atributo o un valor, sus variantes se desactivan (no se borran).
+   */
+  options?:
+    | {
+        attribute: 'size' | 'scent' | 'color';
+        values?:
+          | {
+              label: string;
+              /**
+               * Se genera desde la etiqueta en español. Las variantes lo usan.
+               */
+              code?: string | null;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Con atributos, «Generar variantes» crea las combinaciones que falten.
+   */
   variants?: {
     docs?: (number | Variant)[];
     hasNextPage?: boolean;
@@ -221,6 +249,14 @@ export interface Media {
   focalX?: number | null;
   focalY?: number | null;
   sizes?: {
+    w240?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     w480?: {
       url?: string | null;
       width?: number | null;
@@ -254,8 +290,28 @@ export interface Media {
 export interface Variant {
   id: number;
   product: number | Product;
+  size?: string | null;
+  scent?: string | null;
+  color?: string | null;
+  /**
+   * Único en toda la tienda. Se guarda en mayúsculas.
+   */
   sku: string;
+  /**
+   * Opcional. Código de barras de 8, 12, 13 o 14 cifras.
+   */
+  ean?: string | null;
   price: number;
+  /**
+   * Opcional. Mayor que el precio.
+   */
+  compareAtPrice?: number | null;
+  weightGrams?: number | null;
+  /**
+   * Para el precio por 100 ml o 100 g.
+   */
+  netQuantity?: number | null;
+  netUnit?: ('ml' | 'g') | null;
   /**
    * Desactívala para dejar de venderla sin borrarla.
    */
@@ -387,7 +443,26 @@ export interface ProductsSelect<T extends boolean = true> {
   slug?: T;
   shortDescription?: T;
   description?: T;
-  images?: T;
+  gallery?:
+    | T
+    | {
+        image?: T;
+        variants?: T;
+        id?: T;
+      };
+  options?:
+    | T
+    | {
+        attribute?: T;
+        values?:
+          | T
+          | {
+              label?: T;
+              code?: T;
+              id?: T;
+            };
+        id?: T;
+      };
   variants?: T;
   inci?: T;
   usage?: T;
@@ -404,8 +479,16 @@ export interface ProductsSelect<T extends boolean = true> {
  */
 export interface VariantsSelect<T extends boolean = true> {
   product?: T;
+  size?: T;
+  scent?: T;
+  color?: T;
   sku?: T;
+  ean?: T;
   price?: T;
+  compareAtPrice?: T;
+  weightGrams?: T;
+  netQuantity?: T;
+  netUnit?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -442,6 +525,16 @@ export interface MediaSelect<T extends boolean = true> {
   sizes?:
     | T
     | {
+        w240?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
         w480?:
           | T
           | {
