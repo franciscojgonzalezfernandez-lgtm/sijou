@@ -1,0 +1,36 @@
+name: Preview cleanup
+
+# F-002 CA-2: the Vercel–Neon integration creates a database branch per preview
+# (`preview/<git branch>`) but never deletes it. The free plan caps a project at 10 branches,
+# and once full every new preview fails with "Resource provisioning failed".
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: read
+
+jobs:
+  delete-neon-branch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Delete the preview database branch
+        env:
+          NEON_API_KEY: ${{ secrets.NEON_API_KEY }}
+          NEON_PROJECT_ID: ${{ secrets.NEON_PROJECT_ID }}
+          BRANCH_NAME: preview/${{ github.event.pull_request.head.ref }}
+        run: |
+          if [ -z "$NEON_API_KEY" ] || [ -z "$NEON_PROJECT_ID" ]; then
+            echo "::warning::NEON_API_KEY or NEON_PROJECT_ID is not set; skipping cleanup of $BRANCH_NAME"
+            exit 0
+          fi
+          api="https://console.neon.tech/api/v2/projects/$NEON_PROJECT_ID/branches"
+          auth="Authorization: Bearer $NEON_API_KEY"
+          id=$(curl -fsS -H "$auth" "$api" | jq -r --arg name "$BRANCH_NAME" '.branches[] | select(.name == $name) | .id')
+          if [ -z "$id" ]; then
+            echo "No Neon branch named $BRANCH_NAME"
+            exit 0
+          fi
+          curl -fsS -X DELETE -H "$auth" "$api/$id" > /dev/null
+          echo "Deleted Neon branch $BRANCH_NAME ($id)"
