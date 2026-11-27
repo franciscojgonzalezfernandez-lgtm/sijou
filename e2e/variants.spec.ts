@@ -6,6 +6,7 @@ import type { APIRequestContext, Page } from "@playwright/test";
 import sharp from "sharp";
 
 import { seedProductPaths } from "../scripts/seed-data";
+import { adminSession } from "./admin-session";
 import { expect, test, visit } from "./fixtures";
 
 // F-011: variants and images. Admin flows need the seeded test admin (previews and local only).
@@ -59,11 +60,7 @@ async function api<T>(
 }
 
 async function login(page: Page) {
-  const result = await api<{ token: string }>(page.request, "post", "/api/users/login", {
-    email,
-    password,
-  });
-  token = result.token;
+  token = await adminSession(page);
 }
 
 // The categories checkboxes are fetched on the client: their first one proves the form is hydrated.
