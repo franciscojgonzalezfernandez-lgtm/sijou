@@ -122,24 +122,30 @@ test.describe("F-018 settings and audit log", () => {
         );
         expect(after.lowStockThreshold).toBe(before.lowStockThreshold);
 
-        // In the form, each field shows its own message, also on phones.
+        // In the form, each field shows its own message, also on phones. Each one is checked on
+        // its own tab, right after the refused save (WebKit can drop a hidden tab's error).
+        const refusedSave = async () => {
+          // The form enables "Guardar" once it has registered the change.
+          await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+          const [refused] = await Promise.all([
+            page.waitForResponse(
+              (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
+            ),
+            page.getByRole("button", { name: "Guardar" }).click(),
+          ]);
+          expect(refused.status()).toBe(400);
+        };
         await visit(page, "/admin/globals/settings", { ready: settingsReady });
         await settingsReady(page).click();
         await page.getByRole("textbox", { name: /Email de contacto/ }).fill("no-es-un-email");
+        await refusedSave();
+        await expect(page.getByText("Email no válido.")).toBeVisible();
+
+        await visit(page, "/admin/globals/settings", { ready: settingsReady });
         await page.getByRole("button", { name: "Stock" }).click();
         await page.getByRole("spinbutton", { name: /Umbral de stock bajo/ }).fill("-1");
-        // The form enables "Guardar" once it has registered the change.
-        await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
-        const [refused] = await Promise.all([
-          page.waitForResponse(
-            (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
-          ),
-          page.getByRole("button", { name: "Guardar" }).click(),
-        ]);
-        expect(refused.status()).toBe(400);
+        await refusedSave();
         await expect(page.getByText("Un número entero, 0 o mayor.")).toBeVisible();
-        await settingsReady(page).click();
-        await expect(page.getByText("Email no válido.")).toBeVisible();
       });
 
       await test.step("CA-3: changing the threshold leaves an audit row with before and after", async () => {
