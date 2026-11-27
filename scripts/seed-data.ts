@@ -35,3 +35,41 @@ export const seedProductPaths = {
   de: `/de/produkte/${seedProduct.slug.de}`,
   es: `/es/productos/${seedProduct.slug.es}`,
 } as const;
+
+/** F-012: the sample category (published by the seed), a subcategory and a collection. */
+export const seedTaxonomy = {
+  category: {
+    slug: { es: "cuidado-facial", en: "face-care", de: "gesichtspflege" },
+    description: {
+      es: "Cremas y aceites para cuidar el rostro cada día.",
+      en: "Creams and oils to care for your face every day.",
+      de: "Cremes und Öle für die tägliche Gesichtspflege.",
+    },
+  },
+  subcategory: {
+    name: { es: "Cremas", en: "Creams", de: "Cremes" },
+    slug: { es: "cremas", en: "creams", de: "cremes" },
+  },
+  collection: {
+    name: { es: "Favoritos", en: "Favourites", de: "Lieblinge" },
+    slug: { es: "favoritos", en: "favourites", de: "lieblinge" },
+    description: {
+      es: "Los productos que más nos piden.",
+      en: "The products people ask for most.",
+      de: "Die Produkte, nach denen am meisten gefragt wird.",
+    },
+  },
+} as const;
+
+/** Storefront paths of the sample category and collection in each language (F-012). */
+export const seedCategoryPaths = {
+  en: `/en/${seedTaxonomy.category.slug.en}`,
+  de: `/de/${seedTaxonomy.category.slug.de}`,
+  es: `/es/${seedTaxonomy.category.slug.es}`,
+} as const;
+
+export const seedCollectionPaths = {
+  en: `/en/collections/${seedTaxonomy.collection.slug.en}`,
+  de: `/de/kollektionen/${seedTaxonomy.collection.slug.de}`,
+  es: `/es/colecciones/${seedTaxonomy.collection.slug.es}`,
+} as const;
