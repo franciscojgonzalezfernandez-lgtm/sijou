@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobado (27-11-2026) por el usuario, decisiones como se propusieron |
+| Estado | Implementado (27-11-2026); aprobado el 27-11-2026 con D-1…D-3 como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-012-categorias-colecciones` |
 
@@ -149,3 +149,13 @@ Ninguna. No se usa `@payloadcms/plugin-nested-docs`: guarda los breadcrumbs copi
 | Conflictos con F-011 (migraciones, seed) | No se tocan `Products.ts` ni `catalog.ts`. La migración y el seed se rebasan sobre F-011 si se fusiona antes |
 | Pasar de 6 a 12 URLs alarga Lighthouse CI | Se mide el tiempo en el primer PR; si molesta, se audita un idioma por plantilla nueva y los 3 en el producto |
 | Fechas en el límite y zona horaria | UTC en la base de datos, Europe/Zurich en el panel; inicio incluido y fin excluido, con pruebas en cada límite |
+
+## Notas de implementación (27-11-2026)
+- **Selector de categoría superior:** `NativeRelationship`, un `<select>` nativo con etiqueta que muestra la ruta ("Rostro › Cremas") y deja fuera la propia categoría y sus subcategorías. El widget de Payload (react-select) deja su campo sin nombre accesible.
+- **Productos de una colección:** el campo hasMany de Payload solo reordena arrastrando y su campo de búsqueda no tiene nombre accesible, así que se hizo `OrderedRelationship` (T7): lista con botones "Subir", "Bajar" y "Quitar" con nombre propio, un `<select>` para añadir y un aviso `aria-live` de cada movimiento.
+- **Fechas de visibilidad:** `ZurichDateTime`, un `<input type="datetime-local">` con etiqueta que se escribe en hora de Zúrich y se guarda en UTC (`src/domain/catalog/zurich-time.ts`, probado también en el cambio de horario). No se usa el `timezone` de Payload: su selector de fecha tampoco tiene nombre accesible.
+- **Árbol en memoria:** los hooks leen las categorías con el adaptador de la base de datos (`payload.db.find`), no con la API local. `find({ locale: "all", req })` cambia `req.locale` para el resto del guardado y los datos acababan en otro idioma. El breadcrumb virtual reutiliza el árbol dentro de una petición.
+- **Borrado:** la clave foránea de `products_rels` ya borra en cascada (comprobado en la migración de F-010), así que el producto pierde la categoría sin código extra.
+- **404 de la tienda:** con la ruta comodín, `/en/fr` llega a la página de categoría, cuyo 404 se envía en streaming con estado 200 la primera vez (como el de producto, ver F-010). Para no romper F-003, `src/proxy.ts` responde 404 directamente a un prefijo de idioma que no servimos (`/fr`, `/pt-br/…`), con los textos de `NotFound`.
+- **Caducidad de colecciones:** la lectura fija `cacheLife` hasta la siguiente fecha. Una vida de menos de 5 minutos saca esa lectura del prerender (se resuelve en cada petición), así que el cuerpo de la página va dentro de `<Suspense>`; el título, los metadatos y el selector de idioma usan otra lectura cacheada sin fechas (`getCollectionHead`). La primera visita después puede ver todavía la página anterior (revalidación en segundo plano); la E2E lo tiene en cuenta reintentando unos segundos.
+- **API REST:** una escritura sin `?locale=` falla con "Nombre: Este campo es obligatorio." en categorías, colecciones y también productos (comportamiento previo de Payload con campos localizados obligatorios). Las E2E siempre mandan el idioma.

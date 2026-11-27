@@ -24,5 +24,13 @@ export const routing = defineRouting({
       de: "/produkte/[slug]",
       es: "/productos/[slug]",
     },
+    // F-012 D-1: translated segment, translated slug from the database.
+    "/collections/[slug]": {
+      en: "/collections/[slug]",
+      de: "/kollektionen/[slug]",
+      es: "/colecciones/[slug]",
+    },
+    // F-012/F-021 CA-1: category paths are the slugs of each level ("/es/rostro/cremas").
+    "/[...path]": "/[...path]",
   },
 });

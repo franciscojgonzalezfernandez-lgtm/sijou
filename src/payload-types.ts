@@ -70,6 +70,7 @@ export interface Config {
     products: Product;
     variants: Variant;
     categories: Category;
+    'product-collections': ProductCollection;
     media: Media;
     users: User;
     'audit-log': AuditLog;
@@ -87,6 +88,7 @@ export interface Config {
     products: ProductsSelect<false> | ProductsSelect<true>;
     variants: VariantsSelect<false> | VariantsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
+    'product-collections': ProductCollectionsSelect<false> | ProductCollectionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
@@ -218,16 +220,60 @@ export interface Product {
   createdAt: string;
 }
 /**
+ * Hasta 3 niveles. Para mover una categoría, cambia su categoría superior; para ordenarla entre sus hermanas, su orden.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
   id: number;
+  /**
+   * Vacía = categoría principal. Máximo 3 niveles.
+   */
+  parent?: (number | null) | Category;
+  /**
+   * Entre sus hermanas, menor primero.
+   */
+  position: number;
+  /**
+   * Solo las publicadas se ven en la tienda. Para publicar, completa los 3 idiomas.
+   */
+  status: 'draft' | 'published' | 'hidden';
   name: string;
   /**
    * Se genera a partir del nombre si lo dejas vacío. Una por idioma.
    */
   slug?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Su texto alternativo es el de la foto, en cada idioma.
+   */
+  headerImage?: (number | null) | Media;
+  seo?: {
+    /**
+     * Si lo dejas vacío, se usa el nombre.
+     */
+    title?: string | null;
+    /**
+     * Si la dejas vacía, se usa el primer párrafo del texto.
+     */
+    description?: string | null;
+  };
+  breadcrumb?: string | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -327,6 +373,65 @@ export interface Variant {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-collections".
+ */
+export interface ProductCollection {
+  id: number;
+  /**
+   * Hora de Zúrich. Vacío = desde ya.
+   */
+  visibleFrom?: string | null;
+  /**
+   * Hora de Zúrich, sin incluir. Vacío = sin fin.
+   */
+  visibleUntil?: string | null;
+  /**
+   * Solo las publicadas se ven en la tienda. Para publicar, completa los 3 idiomas.
+   */
+  status: 'draft' | 'published' | 'hidden';
+  name: string;
+  /**
+   * Se genera a partir del nombre si lo dejas vacío. Una por idioma.
+   */
+  slug?: string | null;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Su texto alternativo es el de la foto, en cada idioma.
+   */
+  headerImage?: (number | null) | Media;
+  seo?: {
+    /**
+     * Si lo dejas vacío, se usa el nombre.
+     */
+    title?: string | null;
+    /**
+     * Si la dejas vacía, se usa el primer párrafo del texto.
+     */
+    description?: string | null;
+  };
+  /**
+   * En este orden se muestran en la tienda.
+   */
+  products?: (number | Product)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
 export interface User {
@@ -415,6 +520,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'categories';
         value: number | Category;
+      } | null)
+    | ({
+        relationTo: 'product-collections';
+        value: number | ProductCollection;
       } | null)
     | ({
         relationTo: 'media';
@@ -533,8 +642,42 @@ export interface VariantsSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
+  parent?: T;
+  position?: T;
+  status?: T;
   name?: T;
   slug?: T;
+  description?: T;
+  headerImage?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  breadcrumb?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "product-collections_select".
+ */
+export interface ProductCollectionsSelect<T extends boolean = true> {
+  visibleFrom?: T;
+  visibleUntil?: T;
+  status?: T;
+  name?: T;
+  slug?: T;
+  description?: T;
+  headerImage?: T;
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+      };
+  products?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -10,6 +10,15 @@ const PRODUCT_PATHS = [
   "/de/produkte/lavendel-gesichtscreme",
   "/es/productos/crema-facial-de-lavanda",
 ];
+// F-012: the seeded sample category and collection (keep in sync with scripts/seed-data.ts).
+const TAXONOMY_PATHS = [
+  "/en/face-care",
+  "/de/gesichtspflege",
+  "/es/cuidado-facial",
+  "/en/collections/favourites",
+  "/de/kollektionen/lieblinge",
+  "/es/colecciones/favoritos",
+];
 const withProducts = process.env.DEPLOY_ENV !== "Production";
 // F-004 CA-9: the component catalogue is noindex, so it is only audited where is-crawlable is
 // skipped (deployed URLs, below).
@@ -17,7 +26,7 @@ const CATALOG_PATHS = ["/en/catalog", "/de/katalog", "/es/catalogo"];
 const urlsFor = (base) =>
   [
     ...LOCALES.map((l) => `/${l}`),
-    ...(withProducts ? PRODUCT_PATHS : []),
+    ...(withProducts ? [...PRODUCT_PATHS, ...TAXONOMY_PATHS] : []),
     ...(url ? CATALOG_PATHS : []),
   ].map((path) => new URL(path, base).toString());
 const bypass = process.env.VERCEL_AUTOMATION_BYPASS_SECRET;

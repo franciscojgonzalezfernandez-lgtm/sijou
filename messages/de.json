@@ -107,5 +107,16 @@
     "previous": "Zurück",
     "next": "Weiter",
     "page": "Seite {page}"
+  },
+  "Category": {
+    "breadcrumbs": "Du bist hier",
+    "home": "Start",
+    "subcategories": "Unterkategorien",
+    "products": "Produkte",
+    "empty": "Noch keine Produkte."
+  },
+  "Collection": {
+    "products": "Produkte",
+    "empty": "Noch keine Produkte."
   }
 }
