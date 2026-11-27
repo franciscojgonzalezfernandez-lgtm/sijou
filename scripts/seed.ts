@@ -171,7 +171,8 @@ async function seedCategoriesAndCollections(payload: Payload) {
   const first = product.gallery?.[0]?.image;
   const headerImage = typeof first === "object" && first !== null ? first.id : first;
 
-  if (category.status !== "published") {
+  // The migration publishes categories that already exist, so look at the texts, not the status.
+  if (!category.description) {
     for (const locale of contentLocales) {
       await payload.update({
         collection: "categories",
@@ -180,6 +181,8 @@ async function seedCategoriesAndCollections(payload: Payload) {
         data: { description: richText(t.category.description[locale]), headerImage },
       });
     }
+  }
+  if (category.status !== "published") {
     await payload.update({
       collection: "categories",
       id: category.id,

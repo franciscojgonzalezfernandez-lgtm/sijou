@@ -78,7 +78,7 @@ async function api<T>(
 /** Visits a shop page that must be a 404 (streamed: the first hit can answer 200). */
 async function expectNotInStore(page: Page, url: string) {
   await page.goto(url); // eslint-disable-line no-restricted-syntax -- a 404 page must not fail visit()
-  await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);
+  await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
 }
 
 const slugOf = (text: string) =>
@@ -429,7 +429,7 @@ test.describe("F-012 categories and collections in the admin", () => {
           .poll(
             async () => {
               await page.goto(`/es/colecciones/${navidad.slug.es}`); // eslint-disable-line no-restricted-syntax -- a 404 page must not fail visit()
-              return page.locator('meta[name="robots"]').getAttribute("content");
+              return page.locator('meta[name="robots"]').first().getAttribute("content");
             },
             { timeout: 30_000, intervals: [1_000, 2_000, 3_000] },
           )

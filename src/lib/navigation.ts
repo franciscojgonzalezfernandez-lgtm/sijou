@@ -209,6 +209,48 @@ export async function getVisibleCollection(
   };
 }
 
+export interface CollectionHead {
+  seoTitle: string;
+  seoDescription: string | null;
+  slugs: Record<Locale, string>;
+}
+
+/**
+ * A published collection's title, description and slugs, ignoring its dates: for metadata and
+ * the language switcher, which must not depend on the clock (the body checks the dates).
+ */
+export async function getCollectionHead(
+  locale: Locale,
+  slug: string,
+): Promise<CollectionHead | null> {
+  "use cache";
+  cacheTag(CATALOG_TAG);
+  cacheLife("max");
+
+  const payload = await getPayload({ config });
+  const { docs } = await payload.find({
+    collection: "product-collections",
+    locale,
+    where: { and: [{ slug: { equals: slug } }, { status: { equals: "published" } }] },
+    depth: 0,
+    limit: 1,
+    pagination: false,
+  });
+  const doc = docs[0];
+  if (!doc) return null;
+  const all = await payload.findByID({
+    collection: "product-collections",
+    id: doc.id,
+    locale: "all",
+    depth: 0,
+    select: { slug: true },
+  });
+  const slugs = (all.slug ?? {}) as unknown as Partial<Record<Locale, string>>;
+  if (locales.some((l) => !slugs[l])) return null;
+  const { seoTitle, seoDescription } = texts(doc as unknown as Doc);
+  return { seoTitle, seoDescription, slugs: slugs as Record<Locale, string> };
+}
+
 /** Slugs of collections visible now in one language, for `generateStaticParams`. */
 export async function getCollectionSlugs(locale: Locale): Promise<string[]> {
   "use cache";
