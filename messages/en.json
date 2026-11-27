@@ -107,5 +107,16 @@
     "previous": "Previous",
     "next": "Next",
     "page": "Page {page}"
+  },
+  "Category": {
+    "breadcrumbs": "You are here",
+    "home": "Home",
+    "subcategories": "Subcategories",
+    "products": "Products",
+    "empty": "No products yet."
+  },
+  "Collection": {
+    "products": "Products",
+    "empty": "No products yet."
   }
 }

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (27-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RF-NAV-01, 02, 03 |
 | Depende de | F-010 |

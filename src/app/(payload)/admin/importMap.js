@@ -29,6 +29,10 @@ import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0
 import { GenerateVariants as GenerateVariants_1404c89798160485600360d7c7bdb8f6 } from '../../../components/admin/GenerateVariants'
 import { ProductReference as ProductReference_c4ff8ac14a7ea0fddd5adb86f9795082 } from '../../../components/admin/ProductReference'
 import { VariantValueSelect as VariantValueSelect_905ca4022f8a41e2e8250787b5b1bdba } from '../../../components/admin/VariantValueSelect'
+import { DeleteImpact as DeleteImpact_0ee5050373c51326073e1af284aa9d47 } from '../../../components/admin/DeleteImpact'
+import { NativeRelationship as NativeRelationship_592b3c2c7828e2d987ebafd25a98a545 } from '../../../components/admin/NativeRelationship'
+import { ZurichDateTime as ZurichDateTime_3d0a63cd69af695e1558d7d08bb4b75d } from '../../../components/admin/ZurichDateTime'
+import { OrderedRelationship as OrderedRelationship_d89adb9e560369d8202538ba8b7507a7 } from '../../../components/admin/OrderedRelationship'
 import { UploadProgress as UploadProgress_caff6e112440b4dcb78c02005a0ea302 } from '../../../components/admin/UploadProgress'
 import { ReadOnlyDate as ReadOnlyDate_a3baf17fbacfb8ff71207da87b56abf6 } from '../../../components/admin/ReadOnlyDate'
 import { AuditChanges as AuditChanges_ecf9c3b42cc1b683ce8744dcd9f23b0a } from '../../../components/admin/AuditChanges'
@@ -69,6 +73,10 @@ export const importMap = {
   "/components/admin/GenerateVariants#GenerateVariants": GenerateVariants_1404c89798160485600360d7c7bdb8f6,
   "/components/admin/ProductReference#ProductReference": ProductReference_c4ff8ac14a7ea0fddd5adb86f9795082,
   "/components/admin/VariantValueSelect#VariantValueSelect": VariantValueSelect_905ca4022f8a41e2e8250787b5b1bdba,
+  "/components/admin/DeleteImpact#DeleteImpact": DeleteImpact_0ee5050373c51326073e1af284aa9d47,
+  "/components/admin/NativeRelationship#NativeRelationship": NativeRelationship_592b3c2c7828e2d987ebafd25a98a545,
+  "/components/admin/ZurichDateTime#ZurichDateTime": ZurichDateTime_3d0a63cd69af695e1558d7d08bb4b75d,
+  "/components/admin/OrderedRelationship#OrderedRelationship": OrderedRelationship_d89adb9e560369d8202538ba8b7507a7,
   "/components/admin/UploadProgress#UploadProgress": UploadProgress_caff6e112440b4dcb78c02005a0ea302,
   "/components/admin/ReadOnlyDate#ReadOnlyDate": ReadOnlyDate_a3baf17fbacfb8ff71207da87b56abf6,
   "/components/admin/AuditChanges#AuditChanges": AuditChanges_ecf9c3b42cc1b683ce8744dcd9f23b0a,
