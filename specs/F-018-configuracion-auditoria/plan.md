@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Propuesto (26-11-2026), pendiente de aprobación |
+| Estado | Aprobado (27-11-2026) por el usuario, decisiones como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-018-configuracion-auditoria` |
 
