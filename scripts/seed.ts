@@ -8,7 +8,7 @@ import { getPayload, type Payload } from "payload";
 
 import { contentLocales } from "../src/domain/products/readiness";
 import config from "../src/payload.config";
-import { SEED_SKU, seedProduct } from "./seed-data";
+import { SEED_SKU, seedProduct, seedTaxonomy } from "./seed-data";
 
 // Test data must never reach production: previews seed their own Neon branch (F-002 CA-2).
 if (process.env.VERCEL_ENV === "production") {
@@ -37,6 +37,7 @@ if (existing.totalDocs === 0) {
 }
 
 await seedCatalog(payload);
+await seedCategoriesAndCollections(payload);
 
 process.exit(0);
 
@@ -81,7 +82,7 @@ async function seedCatalog(payload: Payload) {
   const category = await payload.create({
     collection: "categories",
     locale: "es",
-    data: { name: p.category.es },
+    data: { name: p.category.es, status: "draft", position: 0 },
   });
   const image = await payload.create({
     collection: "media",
@@ -136,4 +137,114 @@ async function seedCatalog(payload: Payload) {
   });
   await payload.update({ collection: "products", id: product.id, data: { status: "published" } });
   payload.logger.info("Seed: created and published the sample product");
+}
+
+/**
+ * F-012: the sample category published with its texts and banner, a published subcategory and a
+ * published collection with the sample product. Each step checks first, so reruns change nothing.
+ */
+async function seedCategoriesAndCollections(payload: Payload) {
+  const t = seedTaxonomy;
+  const [category] = (
+    await payload.find({
+      collection: "categories",
+      locale: "es",
+      where: { slug: { equals: t.category.slug.es } },
+      limit: 1,
+      depth: 0,
+    })
+  ).docs;
+  const [variant] = (
+    await payload.find({
+      collection: "variants",
+      where: { sku: { equals: SEED_SKU } },
+      limit: 1,
+      depth: 0,
+    })
+  ).docs;
+  if (!category || !variant) {
+    payload.logger.warn("Seed: sample category or product missing, skipping F-012 data");
+    return;
+  }
+  const productId = typeof variant.product === "object" ? variant.product.id : variant.product;
+  const product = await payload.findByID({ collection: "products", id: productId, depth: 0 });
+  const first = product.gallery?.[0]?.image;
+  const headerImage = typeof first === "object" && first !== null ? first.id : first;
+
+  if (category.status !== "published") {
+    for (const locale of contentLocales) {
+      await payload.update({
+        collection: "categories",
+        id: category.id,
+        locale,
+        data: { description: richText(t.category.description[locale]), headerImage },
+      });
+    }
+    await payload.update({
+      collection: "categories",
+      id: category.id,
+      data: { status: "published" },
+    });
+  }
+
+  const subcategory = await payload.find({
+    collection: "categories",
+    locale: "es",
+    where: { slug: { equals: t.subcategory.slug.es } },
+    limit: 1,
+    depth: 0,
+  });
+  if (subcategory.totalDocs === 0) {
+    const created = await payload.create({
+      collection: "categories",
+      locale: "es",
+      data: { name: t.subcategory.name.es, parent: category.id, status: "draft", position: 0 },
+    });
+    for (const locale of contentLocales) {
+      await payload.update({
+        collection: "categories",
+        id: created.id,
+        locale,
+        data: { name: t.subcategory.name[locale], slug: t.subcategory.slug[locale] },
+      });
+    }
+    await payload.update({
+      collection: "categories",
+      id: created.id,
+      data: { status: "published" },
+    });
+  }
+
+  const collection = await payload.find({
+    collection: "product-collections",
+    locale: "es",
+    where: { slug: { equals: t.collection.slug.es } },
+    limit: 1,
+    depth: 0,
+  });
+  if (collection.totalDocs === 0) {
+    const created = await payload.create({
+      collection: "product-collections",
+      locale: "es",
+      data: { name: t.collection.name.es, status: "draft", products: [productId], headerImage },
+    });
+    for (const locale of contentLocales) {
+      await payload.update({
+        collection: "product-collections",
+        id: created.id,
+        locale,
+        data: {
+          name: t.collection.name[locale],
+          slug: t.collection.slug[locale],
+          description: richText(t.collection.description[locale]),
+        },
+      });
+    }
+    await payload.update({
+      collection: "product-collections",
+      id: created.id,
+      data: { status: "published" },
+    });
+  }
+  payload.logger.info("Seed: sample categories and collection ready");
 }

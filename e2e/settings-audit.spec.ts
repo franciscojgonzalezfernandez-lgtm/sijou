@@ -123,6 +123,8 @@ test.describe("F-018 settings and audit log", () => {
       await page.getByRole("textbox", { name: /Email de contacto/ }).fill("no-es-un-email");
       await page.getByRole("button", { name: "Stock" }).click();
       await page.getByRole("spinbutton", { name: /Umbral de stock bajo/ }).fill("-1");
+      // The form enables "Guardar" once it has registered the change.
+      await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
       await page.getByRole("button", { name: "Guardar" }).click();
       await expect(page.getByText("Un número entero, 0 o mayor.")).toBeVisible();
       await settingsReady(page).click();
