@@ -8,12 +8,14 @@ import { buildConfig } from "payload";
 import sharp from "sharp";
 
 import { AccessibleNameFeature } from "./components/admin/lexical-accessible-name/server";
+import { AuditLog } from "./collections/AuditLog";
 import { Categories } from "./collections/Categories";
 import { Media } from "./collections/Media";
 import { Products } from "./collections/Products";
 import { Users } from "./collections/Users";
 import { Variants } from "./collections/Variants";
 import { withExplicitSslMode } from "./db-url";
+import { Settings } from "./globals/Settings";
 import { contentLocales } from "./domain/products/readiness";
 import { serverEnv, trustedOrigins } from "./env";
 
@@ -45,7 +47,8 @@ export default buildConfig({
     defaultLocale: "es",
     fallback: false,
   },
-  collections: [Products, Variants, Categories, Media, Users],
+  collections: [Products, Variants, Categories, Media, Users, AuditLog],
+  globals: [Settings],
   // AccessibleNameFeature: names the editable area after its field label (constitution II).
   editor: lexicalEditor({
     features: ({ defaultFeatures }) => [...defaultFeatures, AccessibleNameFeature()],

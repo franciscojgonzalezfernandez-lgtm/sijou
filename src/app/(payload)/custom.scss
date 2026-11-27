@@ -183,3 +183,108 @@
 .nav-group__toggle {
   min-height: 24px;
 }
+
+/* F-018: audit log filters, changes table and history link. */
+.audit-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 0.75rem 1rem;
+  margin-block: 0 1.5rem;
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 10rem;
+  }
+
+  select,
+  input {
+    min-height: 44px;
+    padding-inline: 0.5rem;
+    border: 1px solid var(--theme-elevation-400);
+    border-radius: var(--style-radius-s);
+    background: var(--theme-input-bg);
+    color: var(--theme-text);
+    font: inherit;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 0.5rem;
+
+    .btn {
+      margin: 0;
+    }
+  }
+}
+
+.audit-changes {
+  margin-bottom: var(--base);
+
+  &__scroll {
+    overflow-x: auto;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  caption {
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-align: start;
+  }
+
+  th,
+  td {
+    padding: 0.5rem;
+    border: 1px solid var(--theme-elevation-200);
+    text-align: start;
+    vertical-align: top;
+    overflow-wrap: anywhere;
+    white-space: pre-wrap;
+  }
+}
+
+.audit-history-link {
+  margin: 0 0 var(--base);
+}
+
+// F-018: inactive tabs (settings) are greyed with opacity 0.5, below 4.5:1. Full opacity with the
+// secondary text colour keeps them distinct from the active tab, which also has its underline.
+.tabs-field__tab-button {
+  opacity: 1;
+  color: var(--theme-elevation-800);
+
+  &--active {
+    color: var(--theme-text);
+  }
+}
+
+.read-only-date {
+  margin-bottom: var(--base);
+
+  p {
+    margin: 0;
+  }
+}
+
+// F-018: Payload hides every tooltip at 1024 px and below, field errors included, so on phones a
+// rejected save showed no reason. There, errors sit as plain text under their field.
+@media (max-width: 1024px) {
+  .field-error.tooltip {
+    display: block;
+    position: static;
+    max-width: none;
+    margin-top: 0.25rem;
+    transform: none;
+    white-space: normal;
+
+    &::after {
+      display: none;
+    }
+  }
+}

@@ -18,6 +18,7 @@ import {
   variantMatchesOptions,
 } from "@/domain/products/variant-options";
 
+import { auditHooks } from "./audit";
 import { expireCatalog } from "./shared";
 
 const NATIVE_SELECT = "/components/admin/NativeSelect#NativeSelect";
@@ -109,6 +110,12 @@ const enforceCombination: CollectionBeforeChangeHook = async ({ data, originalDo
  * Sellable variant (F-010 D-1, completed in F-011). Its own collection so stock (F-013), orders
  * (F-033) and reservations (F-060) can reference it with a stable key.
  */
+/** F-018 CA-3: prices and every other change, labelled by SKU. */
+const audit = auditHooks({
+  entity: "variants",
+  label: (doc) => (typeof doc.sku === "string" ? doc.sku : `#${String(doc.id)}`),
+});
+
 export const Variants: CollectionConfig = {
   slug: "variants",
   labels: { singular: "Variante", plural: "Variantes" },
@@ -117,6 +124,15 @@ export const Variants: CollectionConfig = {
     defaultColumns: ["sku", "product", "size", "scent", "color", "price", "active"],
   },
   fields: [
+    {
+      name: "auditHistory",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        custom: { entity: "variants" },
+        components: { Field: "/components/admin/AuditHistoryLink#AuditHistoryLink" },
+      },
+    },
     {
       name: "product",
       type: "relationship",
@@ -223,7 +239,7 @@ export const Variants: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [enforceCombination],
-    afterChange: [() => expireCatalog()],
+    afterChange: [() => expireCatalog(), audit.afterChange],
     // CA-5: a deleted variant leaves the gallery rows it was assigned to.
     afterDelete: [
       async ({ doc, req }) => {
@@ -254,6 +270,7 @@ export const Variants: CollectionConfig = {
         }
         expireCatalog();
       },
+      audit.afterDelete,
     ],
   },
 };

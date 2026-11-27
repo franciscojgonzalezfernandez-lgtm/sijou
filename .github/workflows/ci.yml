@@ -19,7 +19,17 @@ jobs:
   quality:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    # Placeholders so `next typegen` can load the config; nothing here connects anywhere.
+    # Throwaway database for the migration check below; nothing else connects anywhere.
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U ci" --health-interval 5s --health-timeout 5s --health-retries 10
     env:
       DATABASE_URL: postgresql://ci:ci@localhost:5432/ci
       PAYLOAD_SECRET: ci-placeholder-not-a-secret-000000000000
@@ -36,6 +46,18 @@ jobs:
       - run: pnpm lint
       - run: pnpm typecheck
       - run: pnpm test:unit --coverage
+      # Migrations apply on an empty database, and the audit log rejects UPDATE and DELETE
+      # (F-018 CA-4, CA-6).
+      - run: pnpm migrate
+      - name: Audit log is append-only
+        env:
+          PGPASSWORD: ci
+        run: |
+          q() { psql -h localhost -U ci -d ci -v ON_ERROR_STOP=1 -qtAc "$1"; }
+          q "INSERT INTO audit_log (at, entity, action) VALUES (now(), 'settings', 'update')"
+          if q "UPDATE audit_log SET locale = 'es'"; then echo "UPDATE was allowed"; exit 1; fi
+          if q "DELETE FROM audit_log"; then echo "DELETE was allowed"; exit 1; fi
+          echo "audit_log rejects UPDATE and DELETE"
       - name: Coverage summary
         if: always() && hashFiles('coverage/coverage-summary.json') != ''
         run: |
