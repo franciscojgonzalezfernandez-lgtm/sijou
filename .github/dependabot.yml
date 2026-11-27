@@ -11,6 +11,12 @@ updates:
       # Types must match the Node.js runtime (24 LTS, see .nvmrc); bump together with the runtime.
       - dependency-name: "@types/node"
         update-types: ["version-update:semver-major"]
+      # eslint-config-next (Next 16.4) does not load on ESLint 10 yet, and Next has no TypeScript 7
+      # support yet; bump these majors together with Next.
+      - dependency-name: "eslint"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
     groups:
       next-react:
         patterns:
