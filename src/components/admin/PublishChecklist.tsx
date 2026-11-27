@@ -6,6 +6,8 @@ import { useEffect, useId, useState } from "react";
 interface Readiness {
   ready: boolean;
   lines: string[];
+  /** F-011: things to know that do not block publishing, e.g. switched-off variants. */
+  notices?: string[];
 }
 
 /**
@@ -54,6 +56,11 @@ export function PublishChecklist() {
             ))}
           </ul>
         )}
+        {readiness?.notices?.map((notice) => (
+          <p key={notice} className="publish-checklist__notice">
+            {notice}
+          </p>
+        ))}
       </div>
     </section>
   );

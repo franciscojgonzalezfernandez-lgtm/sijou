@@ -65,6 +65,8 @@ export default buildConfig({
       token: process.env.BLOB_READ_WRITE_TOKEN,
       // Same schema with and without the token, so migrations match everywhere.
       alwaysInsertFields: true,
+      // F-011 CA-7: the browser uploads straight to Blob (no 4.5 MB function limit), admins only.
+      clientUploads: { access: ({ req }) => Boolean(req.user) },
       collections: {
         media: {
           // Previews and production never share files.

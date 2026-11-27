@@ -210,7 +210,7 @@ test.describe("F-010 product lifecycle in the admin", () => {
           description: richText(`Long ${locale} ${tag}`),
           inci: locale === "en" ? "Aqua, Glycerin" : undefined,
           categories: [category.doc.id],
-          images: [media.id],
+          gallery: [{ image: media.id }],
         });
       }
     });

@@ -7,6 +7,7 @@ import { getPayload } from "payload";
 
 import { CATALOG_TAG } from "@/collections/shared";
 import { serverEnv } from "@/env";
+import { mainImage } from "@/domain/products/gallery";
 import { responsiveImage, type ResponsiveImage } from "@/domain/products/images";
 import { contentLocales } from "@/domain/products/readiness";
 import type { Locale } from "@/i18n/locales";
@@ -73,7 +74,7 @@ export async function getPublishedProduct(
   const slugs = (all.slug ?? {}) as unknown as Partial<Record<Locale, string>>;
   if (contentLocales.some((l) => !slugs[l])) return null;
 
-  const first = product.images?.[0];
+  const first = mainImage(product.gallery);
   const media = typeof first === "object" ? first : null;
   const image = responsiveImage(media, serverEnv().NEXT_PUBLIC_SITE_URL);
 

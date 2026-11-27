@@ -1,6 +1,13 @@
 "use client";
 
-import { FieldDescription, FieldError, useConfig, useField, useLocale } from "@payloadcms/ui";
+import {
+  FieldDescription,
+  FieldError,
+  useConfig,
+  useDocumentInfo,
+  useField,
+  useLocale,
+} from "@payloadcms/ui";
 import type { RelationshipFieldClientComponent } from "payload";
 import { useEffect, useId, useState } from "react";
 
@@ -23,6 +30,9 @@ function idOf(value: unknown): Id | undefined {
  * Many-to-many relationship as a list of native checkboxes in a fieldset (F-010, constitution II).
  * Replaces Payload's react-select widget, whose input has no accessible name. Meant for short
  * lists such as categories (tens of items).
+ *
+ * `admin.custom.sameDocument: "<field>"` lists only the items whose `<field>` points at the
+ * document being edited, e.g. a product's own variants in its gallery (F-011 CA-5).
  */
 export const CheckboxRelationship: RelationshipFieldClientComponent = ({
   field,
@@ -37,6 +47,11 @@ export const CheckboxRelationship: RelationshipFieldClientComponent = ({
   const relationTo = Array.isArray(field.relationTo) ? field.relationTo[0] : field.relationTo;
   const label = typeof field.label === "string" ? field.label : path;
   const selected = new Set((Array.isArray(value) ? value : []).map(idOf));
+  const { id: documentId } = useDocumentInfo();
+  const custom = field.admin?.custom as { sameDocument?: string; emptyText?: string } | undefined;
+  const sameDocument = custom?.sameDocument;
+  // An unsaved document has nothing of its own to list yet.
+  const shown = sameDocument && (documentId === undefined || documentId === null) ? [] : options;
 
   useEffect(() => {
     const controller = new AbortController();
@@ -49,6 +64,10 @@ export const CheckboxRelationship: RelationshipFieldClientComponent = ({
       locale: locale.code,
       "fallback-locale": config.localization ? config.localization.defaultLocale : "",
     });
+    if (sameDocument) {
+      if (documentId === undefined || documentId === null) return () => controller.abort();
+      params.set(`where[${sameDocument}][equals]`, String(documentId));
+    }
     // Same-origin path: the admin can be served from a different host than serverURL (previews).
     fetch(`${config.routes.api}/${relationTo}?${params.toString()}`, {
       credentials: "include",
@@ -67,7 +86,7 @@ export const CheckboxRelationship: RelationshipFieldClientComponent = ({
         if (!controller.signal.aborted) setOptions([]);
       });
     return () => controller.abort();
-  }, [config, locale.code, relationTo]);
+  }, [config, locale.code, relationTo, sameDocument, documentId]);
 
   function toggle(id: Id, checked: boolean) {
     const current = (Array.isArray(value) ? value : []).map(idOf).filter((v) => v !== undefined);
@@ -85,16 +104,20 @@ export const CheckboxRelationship: RelationshipFieldClientComponent = ({
         {field.required && <span className="required">*</span>}
       </legend>
       <FieldError message={errorMessage} path={path} showError={showError} />
-      {options === null ? (
+      {shown === null ? (
         <p aria-live="polite">Cargando…</p>
-      ) : options.length === 0 ? (
-        <p>
-          No hay elementos todavía.{" "}
-          <a href={`${config.routes.admin}/collections/${relationTo}/create`}>Crear uno</a>
-        </p>
+      ) : shown.length === 0 ? (
+        custom?.emptyText ? (
+          <p>{custom.emptyText}</p>
+        ) : (
+          <p>
+            No hay elementos todavía.{" "}
+            <a href={`${config.routes.admin}/collections/${relationTo}/create`}>Crear uno</a>
+          </p>
+        )
       ) : (
         <ul className="checkbox-relationship__list">
-          {options.map((option) => (
+          {shown.map((option) => (
             <li key={option.id}>
               <label className="checkbox-relationship__option">
                 <input
