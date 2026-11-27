@@ -25,6 +25,10 @@ import { StrikethroughFeatureClient as StrikethroughFeatureClient_e70f5e05f09f93
 import { UnderlineFeatureClient as UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { BoldFeatureClient as BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
 import { ItalicFeatureClient as ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864 } from '@payloadcms/richtext-lexical/client'
+import { GenerateVariants as GenerateVariants_1404c89798160485600360d7c7bdb8f6 } from '../../../components/admin/GenerateVariants'
+import { ProductReference as ProductReference_c4ff8ac14a7ea0fddd5adb86f9795082 } from '../../../components/admin/ProductReference'
+import { VariantValueSelect as VariantValueSelect_905ca4022f8a41e2e8250787b5b1bdba } from '../../../components/admin/VariantValueSelect'
+import { UploadProgress as UploadProgress_caff6e112440b4dcb78c02005a0ea302 } from '../../../components/admin/UploadProgress'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { VercelBlobClientUploadHandler as VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e } from '@payloadcms/storage-vercel-blob/client'
 
@@ -57,6 +61,10 @@ export const importMap = {
   "@payloadcms/richtext-lexical/client#UnderlineFeatureClient": UnderlineFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#BoldFeatureClient": BoldFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
   "@payloadcms/richtext-lexical/client#ItalicFeatureClient": ItalicFeatureClient_e70f5e05f09f93e00b997edb1ef0c864,
+  "/components/admin/GenerateVariants#GenerateVariants": GenerateVariants_1404c89798160485600360d7c7bdb8f6,
+  "/components/admin/ProductReference#ProductReference": ProductReference_c4ff8ac14a7ea0fddd5adb86f9795082,
+  "/components/admin/VariantValueSelect#VariantValueSelect": VariantValueSelect_905ca4022f8a41e2e8250787b5b1bdba,
+  "/components/admin/UploadProgress#UploadProgress": UploadProgress_caff6e112440b4dcb78c02005a0ea302,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/storage-vercel-blob/client#VercelBlobClientUploadHandler": VercelBlobClientUploadHandler_16c82c5e25f430251a3e3ba57219ff4e
 }

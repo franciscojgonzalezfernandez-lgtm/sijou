@@ -1,4 +1,5 @@
 import { isValidPrice } from "./price";
+import { type ProductOption, type VariantValues, variantMatchesOptions } from "./variant-options";
 
 /** Content languages, in the order the admin reads them (Spanish first, F-010 HU-1). */
 export const contentLocales = ["es", "en", "de"] as const;
@@ -7,7 +8,7 @@ export type ContentLocale = (typeof contentLocales)[number];
 
 type Localized<T> = Partial<Record<ContentLocale, T | null | undefined>> | null | undefined;
 
-export interface ReadinessVariant {
+export interface ReadinessVariant extends VariantValues {
   sku?: string | null;
   price?: number | null;
   active?: boolean | null;
@@ -24,12 +25,15 @@ export interface ReadinessInput {
   shortDescription?: Localized<string>;
   description?: Localized<unknown>;
   categoryCount: number;
+  /** Variant attributes and their values (F-011 CA-1). */
+  options?: readonly ProductOption[] | null;
   variants: readonly ReadinessVariant[];
   images: readonly ReadinessImage[];
 }
 
-export type LocalizedField = "name" | "slug" | "shortDescription" | "description" | "imageAlt";
-export type ProductRequirement = "category" | "variant" | "image";
+export type LocalizedField =
+  "name" | "slug" | "shortDescription" | "description" | "imageAlt" | "optionLabel";
+export type ProductRequirement = "category" | "variant" | "variantOptions" | "image";
 
 export type MissingItem =
   { field: LocalizedField; locale: ContentLocale } | { field: ProductRequirement };
@@ -59,7 +63,7 @@ function nodeHasText(node: unknown): boolean {
 const TEXT_FIELDS = ["name", "slug", "shortDescription"] as const;
 
 /**
- * F-010 CA-2: a product can be published only when name, slug, short and long description exist
+ * F-010 CA-2 and F-011: a product can be published only when name, slug, short and long description exist
  * in es, en and de, and it has a category, an active variant with SKU and price, and a photo.
  * Photos also need their alternative text in the 3 languages (F-011 CA-6, brought forward).
  */
@@ -76,13 +80,19 @@ export function publishReadiness(product: ReadinessInput): Readiness {
     if (product.images.some((image) => !hasText(image.alt?.[locale]))) {
       missing.push({ field: "imageAlt", locale });
     }
+    const values = (product.options ?? []).flatMap((option) => option.values ?? []);
+    if (values.some((value) => !hasText(value.label?.[locale]))) {
+      missing.push({ field: "optionLabel", locale });
+    }
   }
 
   if (product.categoryCount < 1) missing.push({ field: "category" });
-  const sellable = product.variants.some(
-    (variant) => variant.active !== false && hasText(variant.sku) && isValidPrice(variant.price),
-  );
+  const active = product.variants.filter((variant) => variant.active !== false);
+  const matching = active.filter((variant) => variantMatchesOptions(variant, product.options));
+  const sellable = matching.some((variant) => hasText(variant.sku) && isValidPrice(variant.price));
   if (!sellable) missing.push({ field: "variant" });
+  // F-011: an active variant must have one valid value per attribute the product uses.
+  if (matching.length < active.length) missing.push({ field: "variantOptions" });
   if (product.images.length < 1) missing.push({ field: "image" });
 
   return { ready: missing.length === 0, missing };
@@ -100,11 +110,13 @@ const FIELD_NAMES: Record<LocalizedField, string> = {
   shortDescription: "descripción corta",
   description: "descripción larga",
   imageAlt: "texto alternativo de las fotos",
+  optionLabel: "etiquetas de los valores de las variantes",
 };
 
 const REQUIREMENT_NAMES: Record<ProductRequirement, string> = {
   category: "al menos una categoría",
   variant: "al menos una variante activa con SKU y precio",
+  variantOptions: "que cada variante activa tenga un valor de cada atributo del producto",
   image: "al menos una foto",
 };
 

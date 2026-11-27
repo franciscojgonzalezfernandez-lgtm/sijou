@@ -100,7 +100,7 @@ async function seedCatalog(payload: Payload) {
       status: "draft",
       restockType: "replenishable",
       categories: [category.id],
-      images: [image.id],
+      gallery: [{ image: image.id }],
     },
   });
   for (const locale of contentLocales) {
