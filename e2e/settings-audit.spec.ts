@@ -2,6 +2,7 @@ import { request, type APIRequestContext, type Page } from "@playwright/test";
 
 import { adminSession } from "./admin-session";
 import { expect, test, visit } from "./fixtures";
+import { withLock } from "./lock";
 
 const email = process.env.SEED_ADMIN_EMAIL ?? "";
 const password = process.env.SEED_ADMIN_PASSWORD ?? "";
@@ -69,99 +70,112 @@ test.describe("F-018 settings and audit log", () => {
   test("CA-1…CA-5: settings, validation, audit rows, filters and read-only log", async ({
     page,
   }, testInfo) => {
-    test.setTimeout(120_000);
+    test.setTimeout(240_000);
     await login(page);
     // A value no other device project uses, so parallel projects never collide.
     const threshold = 1000 + Math.floor(Math.random() * 100_000);
 
-    await test.step("CA-1/CA-2: every setting is on screen with its default", async () => {
-      await visit(page, "/admin/globals/settings", { ready: settingsReady });
-      await settingsReady(page).click();
-      await expect(page.getByRole("textbox", { name: /Nombre de la tienda/ })).toHaveValue("Sijôu");
-      await expect(page.getByRole("textbox", { name: /Email de contacto/ })).toBeVisible();
-      await expect(
-        page.getByRole("textbox", { name: /Dirección para el Impressum/ }),
-      ).toBeVisible();
-      await page.getByRole("button", { name: "Stock" }).click();
-      await expect(page.getByRole("spinbutton", { name: /Umbral de stock bajo/ })).toBeVisible();
-      await expect(page.getByRole("spinbutton", { name: /Días antes de caducar/ })).toBeVisible();
-      await expect(
-        page.getByRole("spinbutton", { name: /Días de aviso de caducidad/ }),
-      ).toBeVisible();
-      await page.getByRole("button", { name: "Avisos" }).click();
-      await expect(page.getByText("Emails que reciben los avisos")).toBeVisible();
-      await page.getByRole("button", { name: "Envíos" }).click();
-      await expect(
-        page.getByRole("spinbutton", { name: /Envío gratis a partir de/ }),
-      ).toBeVisible();
-    });
-
-    await test.step("CA-2: a negative threshold and an invalid email are rejected", async () => {
-      const before = await api<{ lowStockThreshold: number | null }>(
-        page.request,
-        "get",
-        "/api/globals/settings?depth=0",
-      );
-      const response = await page.request.post("/api/globals/settings", {
-        headers: auth(),
-        data: { lowStockThreshold: -1, contactEmail: "no-es-un-email" },
+    // The settings global is shared by every device project: one at a time.
+    await withLock("settings", async () => {
+      await test.step("CA-1/CA-2: every setting is on screen with its default", async () => {
+        await visit(page, "/admin/globals/settings", { ready: settingsReady });
+        await settingsReady(page).click();
+        await expect(page.getByRole("textbox", { name: /Nombre de la tienda/ })).toHaveValue(
+          "Sijôu",
+        );
+        await expect(page.getByRole("textbox", { name: /Email de contacto/ })).toBeVisible();
+        await expect(
+          page.getByRole("textbox", { name: /Dirección para el Impressum/ }),
+        ).toBeVisible();
+        await page.getByRole("button", { name: "Stock" }).click();
+        await expect(page.getByRole("spinbutton", { name: /Umbral de stock bajo/ })).toBeVisible();
+        await expect(page.getByRole("spinbutton", { name: /Días antes de caducar/ })).toBeVisible();
+        await expect(
+          page.getByRole("spinbutton", { name: /Días de aviso de caducidad/ }),
+        ).toBeVisible();
+        await page.getByRole("button", { name: "Avisos" }).click();
+        await expect(page.getByText("Emails que reciben los avisos")).toBeVisible();
+        await page.getByRole("button", { name: "Envíos" }).click();
+        await expect(
+          page.getByRole("spinbutton", { name: /Envío gratis a partir de/ }),
+        ).toBeVisible();
       });
-      expect(response.status()).toBe(400);
-      const body = await response.text();
-      expect(body).toContain("Email de contacto");
-      expect(body).toContain("Umbral de stock bajo");
-      const after = await api<{ lowStockThreshold: number | null }>(
-        page.request,
-        "get",
-        "/api/globals/settings?depth=0",
-      );
-      expect(after.lowStockThreshold).toBe(before.lowStockThreshold);
 
-      // In the form, each field shows its own message, also on phones.
-      await visit(page, "/admin/globals/settings", { ready: settingsReady });
-      await settingsReady(page).click();
-      await page.getByRole("textbox", { name: /Email de contacto/ }).fill("no-es-un-email");
-      await page.getByRole("button", { name: "Stock" }).click();
-      await page.getByRole("spinbutton", { name: /Umbral de stock bajo/ }).fill("-1");
-      // The form enables "Guardar" once it has registered the change.
-      await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
-      await page.getByRole("button", { name: "Guardar" }).click();
-      await expect(page.getByText("Un número entero, 0 o mayor.")).toBeVisible();
-      await settingsReady(page).click();
-      await expect(page.getByText("Email no válido.")).toBeVisible();
-    });
+      await test.step("CA-2: a negative threshold and an invalid email are rejected", async () => {
+        const before = await api<{ lowStockThreshold: number | null }>(
+          page.request,
+          "get",
+          "/api/globals/settings?depth=0",
+        );
+        const response = await page.request.post("/api/globals/settings", {
+          headers: auth(),
+          data: { lowStockThreshold: -1, contactEmail: "no-es-un-email" },
+        });
+        expect(response.status()).toBe(400);
+        const body = await response.text();
+        expect(body).toContain("Email de contacto");
+        expect(body).toContain("Umbral de stock bajo");
+        const after = await api<{ lowStockThreshold: number | null }>(
+          page.request,
+          "get",
+          "/api/globals/settings?depth=0",
+        );
+        expect(after.lowStockThreshold).toBe(before.lowStockThreshold);
 
-    await test.step("CA-3: changing the threshold leaves an audit row with before and after", async () => {
-      await visit(page, "/admin/globals/settings", { ready: settingsReady });
-      await page.getByRole("button", { name: "Stock" }).click();
-      await page.getByRole("spinbutton", { name: /Umbral de stock bajo/ }).fill(String(threshold));
-      await Promise.all([
-        page.waitForResponse(
-          (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
-        ),
-        page.getByRole("button", { name: "Guardar" }).click(),
-      ]);
-
-      const row = (await auditRows(page, { entity: "settings" })).find((r) =>
-        r.changes.some((c) => c.path === "lowStockThreshold" && c.after === threshold),
-      );
-      expect(row, "audit row for the new threshold").toBeDefined();
-      expect(row?.actorEmail).toBe(email);
-      expect(row?.action).toBe("update");
-      const change = row?.changes.find((c) => c.path === "lowStockThreshold");
-      expect(typeof change?.before === "number" || change?.before === null).toBe(true);
-      expect(change?.before).not.toBe(threshold);
-
-      await visit(page, `/admin/collections/audit-log/${row?.id}`, {
-        ready: (p) => p.getByRole("table", { name: "Cambios" }),
+        // In the form, each field shows its own message, also on phones.
+        await visit(page, "/admin/globals/settings", { ready: settingsReady });
+        await settingsReady(page).click();
+        await page.getByRole("textbox", { name: /Email de contacto/ }).fill("no-es-un-email");
+        await page.getByRole("button", { name: "Stock" }).click();
+        await page.getByRole("spinbutton", { name: /Umbral de stock bajo/ }).fill("-1");
+        // The form enables "Guardar" once it has registered the change.
+        await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+        const [refused] = await Promise.all([
+          page.waitForResponse(
+            (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
+          ),
+          page.getByRole("button", { name: "Guardar" }).click(),
+        ]);
+        expect(refused.status()).toBe(400);
+        await expect(page.getByText("Un número entero, 0 o mayor.")).toBeVisible();
+        await settingsReady(page).click();
+        await expect(page.getByText("Email no válido.")).toBeVisible();
       });
-      const tableRow = page
-        .getByRole("table", { name: "Cambios" })
-        .getByRole("row", { name: /lowStockThreshold/ });
-      await expect(tableRow).toContainText(String(threshold));
-      // CA-4: nothing to save or delete on a log row.
-      await expect(page.getByRole("button", { name: "Guardar" })).toHaveCount(0);
-      await expect(page.getByRole("button", { name: /Eliminar/ })).toHaveCount(0);
+
+      await test.step("CA-3: changing the threshold leaves an audit row with before and after", async () => {
+        await visit(page, "/admin/globals/settings", { ready: settingsReady });
+        await page.getByRole("button", { name: "Stock" }).click();
+        await page
+          .getByRole("spinbutton", { name: /Umbral de stock bajo/ })
+          .fill(String(threshold));
+        await Promise.all([
+          page.waitForResponse(
+            (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
+          ),
+          page.getByRole("button", { name: "Guardar" }).click(),
+        ]);
+
+        const row = (await auditRows(page, { entity: "settings" })).find((r) =>
+          r.changes.some((c) => c.path === "lowStockThreshold" && c.after === threshold),
+        );
+        expect(row, "audit row for the new threshold").toBeDefined();
+        expect(row?.actorEmail).toBe(email);
+        expect(row?.action).toBe("update");
+        const change = row?.changes.find((c) => c.path === "lowStockThreshold");
+        expect(typeof change?.before === "number" || change?.before === null).toBe(true);
+        expect(change?.before).not.toBe(threshold);
+
+        await visit(page, `/admin/collections/audit-log/${row?.id}`, {
+          ready: (p) => p.getByRole("table", { name: "Cambios" }),
+        });
+        const tableRow = page
+          .getByRole("table", { name: "Cambios" })
+          .getByRole("row", { name: /lowStockThreshold/ });
+        await expect(tableRow).toContainText(String(threshold));
+        // CA-4: nothing to save or delete on a log row.
+        await expect(page.getByRole("button", { name: "Guardar" })).toHaveCount(0);
+        await expect(page.getByRole("button", { name: /Eliminar/ })).toHaveCount(0);
+      });
     });
 
     const tag = `${testInfo.project.name}-${Date.now()}`;
@@ -173,7 +187,7 @@ test.describe("F-018 settings and audit log", () => {
     );
     const variant = await api<{ doc: { id: number } }>(page.request, "post", "/api/variants", {
       product: product.doc.id,
-      sku: `AUD-${Date.now()}`,
+      sku: `AUD-${Date.now()}-${Math.floor(Math.random() * 1_000_000)}`,
       price: 10,
     });
 
