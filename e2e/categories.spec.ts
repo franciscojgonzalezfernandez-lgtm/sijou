@@ -75,10 +75,30 @@ async function api<T>(
   return (await response.json()) as T;
 }
 
+/**
+ * An admin save expires the catalog cache at once, but on Vercel other instances can serve the
+ * old page for a few seconds. Shop checks after a write reload until they see the change.
+ */
+const PROPAGATION = { timeout: 30_000, intervals: [1_000, 2_000, 5_000] };
+
+/** Visits a shop page until `check` passes. */
+async function expectInStore(page: Page, url: string, check: () => Promise<void>) {
+  await expect(async () => {
+    await visit(page, url);
+    await check();
+  }).toPass(PROPAGATION);
+}
+
 /** Visits a shop page that must be a 404 (streamed: the first hit can answer 200). */
 async function expectNotInStore(page: Page, url: string) {
-  await page.goto(url); // eslint-disable-line no-restricted-syntax -- a 404 page must not fail visit()
-  await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute("content", /noindex/);
+  await expect(async () => {
+    await page.goto(url); // eslint-disable-line no-restricted-syntax -- a 404 page must not fail visit()
+    await expect(page.locator('meta[name="robots"]').first()).toHaveAttribute(
+      "content",
+      /noindex/,
+      { timeout: 2_000 },
+    );
+  }).toPass(PROPAGATION);
 }
 
 const slugOf = (text: string) =>
@@ -308,25 +328,28 @@ test.describe("F-012 categories and collections in the admin", () => {
 
       await test.step("CA-1: moving a category changes its URL; position orders siblings", async () => {
         await api(request, "patch", `/api/categories/${nocheId}?locale=es`, { parent: rostroId });
-        await visit(page, `/es/${rostro.slug.es}/${noche.slug.es}`);
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(noche.name.es);
+        await expectInStore(page, `/es/${rostro.slug.es}/${noche.slug.es}`, async () => {
+          await expect(page.getByRole("heading", { level: 1 })).toHaveText(noche.name.es);
+        });
         await expectNotInStore(page, nochePath);
 
         const aceitesId = await createCategory(request, aceites, { parent: rostroId, position: 0 });
         cleanup.unshift(() => call(request, "delete", `/api/categories/${aceitesId}`));
-        await visit(page, `/es/${rostro.slug.es}`);
-        await expect(subcategoryLinks(page)).toHaveText([
-          aceites.name.es,
-          cremas.name.es,
-          noche.name.es,
-        ]);
+        await expectInStore(page, `/es/${rostro.slug.es}`, async () => {
+          await expect(subcategoryLinks(page)).toHaveText([
+            aceites.name.es,
+            cremas.name.es,
+            noche.name.es,
+          ]);
+        });
         await api(request, "patch", `/api/categories/${aceitesId}?locale=es`, { position: 5 });
-        await visit(page, `/es/${rostro.slug.es}`);
-        await expect(subcategoryLinks(page)).toHaveText([
-          cremas.name.es,
-          noche.name.es,
-          aceites.name.es,
-        ]);
+        await expectInStore(page, `/es/${rostro.slug.es}`, async () => {
+          await expect(subcategoryLinks(page)).toHaveText([
+            cremas.name.es,
+            noche.name.es,
+            aceites.name.es,
+          ]);
+        });
 
         // CA-2: a product in two categories and two collections shows in all four.
         const product = await createProduct(
@@ -382,10 +405,12 @@ test.describe("F-012 categories and collections in the admin", () => {
         await api(request, "patch", `/api/product-collections/${favoritosId}?locale=es`, {
           products: [productId, seedId],
         });
-        await visit(page, `/es/colecciones/${favoritos.slug.es}`);
-        await expect(productLinks(page)).toHaveText([`Bálsamo ${tag}`, seedProduct.name.es]);
-        await visit(page, `/de/kollektionen/${navidad.slug.de}`);
-        await expect(productLinks(page, "de")).toHaveText([`Balsam ${tag}`]);
+        await expectInStore(page, `/es/colecciones/${favoritos.slug.es}`, async () => {
+          await expect(productLinks(page)).toHaveText([`Bálsamo ${tag}`, seedProduct.name.es]);
+        });
+        await expectInStore(page, `/de/kollektionen/${navidad.slug.de}`, async () => {
+          await expect(productLinks(page, "de")).toHaveText([`Balsam ${tag}`]);
+        });
 
         await visit(page, `/admin/collections/product-collections/${favoritosId}`, {
           ready: (p) => p.getByRole("button", { name: `Bajar Bálsamo ${tag}` }),
@@ -400,8 +425,9 @@ test.describe("F-012 categories and collections in the admin", () => {
           ),
           page.getByRole("button", { name: "Guardar" }).click(),
         ]);
-        await visit(page, `/es/colecciones/${favoritos.slug.es}`);
-        await expect(productLinks(page)).toHaveText([seedProduct.name.es, `Bálsamo ${tag}`]);
+        await expectInStore(page, `/es/colecciones/${favoritos.slug.es}`, async () => {
+          await expect(productLinks(page)).toHaveText([seedProduct.name.es, `Bálsamo ${tag}`]);
+        });
       });
 
       await test.step("CA-4: a collection stops showing when its end date passes", async () => {
@@ -421,8 +447,9 @@ test.describe("F-012 categories and collections in the admin", () => {
         await api(request, "patch", `/api/product-collections/${navidadId}?locale=es`, {
           visibleUntil: until.toISOString(),
         });
-        await visit(page, `/es/colecciones/${navidad.slug.es}`);
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(navidad.name.es);
+        await expectInStore(page, `/es/colecciones/${navidad.slug.es}`, async () => {
+          await expect(page.getByRole("heading", { level: 1 })).toHaveText(navidad.name.es);
+        });
         await page.waitForTimeout(Math.max(0, until.getTime() - Date.now()) + 1_000);
         // The cache entry ends with the date; the first visit after it may still be the old page.
         await expect
@@ -443,8 +470,9 @@ test.describe("F-012 categories and collections in the admin", () => {
         await api(request, "patch", `/api/categories/${rostroId}?locale=es`, {
           status: "published",
         });
-        await visit(page, `/es/${rostro.slug.es}/${noche.slug.es}`);
-        await expect(page.getByRole("heading", { level: 1 })).toHaveText(noche.name.es);
+        await expectInStore(page, `/es/${rostro.slug.es}/${noche.slug.es}`, async () => {
+          await expect(page.getByRole("heading", { level: 1 })).toHaveText(noche.name.es);
+        });
 
         await api(request, "patch", `/api/product-collections/${favoritosId}?locale=es`, {
           status: "hidden",
