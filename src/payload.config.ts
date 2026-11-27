@@ -14,7 +14,7 @@ import { Products } from "./collections/Products";
 import { Users } from "./collections/Users";
 import { Variants } from "./collections/Variants";
 import { contentLocales } from "./domain/products/readiness";
-import { serverEnv } from "./env";
+import { serverEnv, trustedOrigins } from "./env";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const env = serverEnv();
@@ -22,7 +22,10 @@ const env = serverEnv();
 const LOCALE_LABELS = { es: "Español", en: "Inglés", de: "Alemán" } as const;
 
 export default buildConfig({
-  serverURL: env.NEXT_PUBLIC_SITE_URL,
+  // No serverURL on purpose: the admin panel then calls the API on the host it was opened on.
+  // An absolute serverURL breaks the panel on every other host of the same deployment
+  // (login redirect loop, writes rejected by the CSRF check).
+  csrf: trustedOrigins(process.env, env.NEXT_PUBLIC_SITE_URL),
   admin: {
     user: Users.slug,
     importMap: { baseDir: path.resolve(dirname) },
