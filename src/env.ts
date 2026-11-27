@@ -14,10 +14,31 @@ export type ServerEnv = z.infer<typeof serverEnvSchema>;
 
 type Source = Record<string, string | undefined>;
 
-/** Vercel previews have no fixed URL: derive the site URL from VERCEL_URL when unset. */
+/**
+ * Without an explicit site URL, derive it from Vercel's system variables: production uses the
+ * project's production domain (never the per-deployment host, which sits behind Vercel
+ * Authentication), previews use their own deployment host.
+ */
 function withDefaults(source: Source): Source {
-  if (source.NEXT_PUBLIC_SITE_URL || !source.VERCEL_URL) return source;
-  return { ...source, NEXT_PUBLIC_SITE_URL: `https://${source.VERCEL_URL}` };
+  if (source.NEXT_PUBLIC_SITE_URL) return source;
+  const host =
+    (source.VERCEL_ENV === "production" ? source.VERCEL_PROJECT_PRODUCTION_URL : undefined) ??
+    source.VERCEL_URL;
+  return host ? { ...source, NEXT_PUBLIC_SITE_URL: `https://${host}` } : source;
+}
+
+/**
+ * Origins allowed to make cookie-authenticated requests to Payload (its CSRF allowlist).
+ * A deployment is reachable on several hosts (production domain, branch alias, deployment URL);
+ * the admin panel must work on whichever one the browser opened.
+ */
+export function trustedOrigins(source: Source, siteURL: string): string[] {
+  const hosts = [source.VERCEL_PROJECT_PRODUCTION_URL, source.VERCEL_BRANCH_URL, source.VERCEL_URL];
+  const origins = [
+    new URL(siteURL).origin,
+    ...hosts.filter((host): host is string => Boolean(host)).map((host) => `https://${host}`),
+  ];
+  return [...new Set(origins)];
 }
 
 export function parseServerEnv(source: Source): ServerEnv {
