@@ -329,3 +329,24 @@
 .ordered-relationship__add .btn {
   margin: 0;
 }
+
+// WCAG 1.4.10: a long document title (a SKU, a product name) in the header breadcrumb never
+// widens the page on phones; it is cut with an ellipsis. Wider, the page zoomed out and its last
+// fields fell outside the scrollable area.
+.app-header__controls-wrapper,
+.app-header__step-nav-wrapper,
+.step-nav {
+  min-width: 0;
+}
+
+.app-header__step-nav-wrapper {
+  flex: 1 1 0;
+  overflow: hidden;
+}
+
+.step-nav__last {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
