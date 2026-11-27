@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { parseServerEnv } from "./env";
+import { parseServerEnv, trustedOrigins } from "./env";
 
 const valid = {
   DATABASE_URL: "postgresql://user:pass@localhost:5432/sijou",
@@ -49,10 +49,57 @@ describe("parseServerEnv", () => {
     ).toBe("https://sijou-git-x.vercel.app");
   });
 
+  it("uses the production domain, not the deployment host, in production", () => {
+    const { NEXT_PUBLIC_SITE_URL: _omit, ...rest } = valid;
+    expect(
+      parseServerEnv({
+        ...rest,
+        VERCEL_ENV: "production",
+        VERCEL_URL: "sijou-abc123-team.vercel.app",
+        VERCEL_PROJECT_PRODUCTION_URL: "sijou-nu.vercel.app",
+      }).NEXT_PUBLIC_SITE_URL,
+    ).toBe("https://sijou-nu.vercel.app");
+  });
+
+  it("ignores the production domain on previews", () => {
+    const { NEXT_PUBLIC_SITE_URL: _omit, ...rest } = valid;
+    expect(
+      parseServerEnv({
+        ...rest,
+        VERCEL_ENV: "preview",
+        VERCEL_URL: "sijou-git-x.vercel.app",
+        VERCEL_PROJECT_PRODUCTION_URL: "sijou-nu.vercel.app",
+      }).NEXT_PUBLIC_SITE_URL,
+    ).toBe("https://sijou-git-x.vercel.app");
+  });
+
   it("CA-6: an explicit site URL wins over VERCEL_URL", () => {
     expect(parseServerEnv({ ...valid, VERCEL_URL: "other.vercel.app" }).NEXT_PUBLIC_SITE_URL).toBe(
       valid.NEXT_PUBLIC_SITE_URL,
     );
+  });
+});
+
+describe("trustedOrigins", () => {
+  it("trusts the site URL and every Vercel host of the deployment", () => {
+    expect(
+      trustedOrigins(
+        {
+          VERCEL_PROJECT_PRODUCTION_URL: "sijou-nu.vercel.app",
+          VERCEL_BRANCH_URL: "sijou-git-main-team.vercel.app",
+          VERCEL_URL: "sijou-abc123-team.vercel.app",
+        },
+        "https://sijou-nu.vercel.app/",
+      ),
+    ).toEqual([
+      "https://sijou-nu.vercel.app",
+      "https://sijou-git-main-team.vercel.app",
+      "https://sijou-abc123-team.vercel.app",
+    ]);
+  });
+
+  it("trusts only the site URL outside Vercel", () => {
+    expect(trustedOrigins({}, "http://localhost:3100")).toEqual(["http://localhost:3100"]);
   });
 });
 
