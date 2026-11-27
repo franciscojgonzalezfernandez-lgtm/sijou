@@ -36,3 +36,6 @@ Lo que la ley exige ver en la web: identidad de la tienda, condiciones, privacid
 
 ## Dudas
 - Ninguna.
+
+## Notas de otras features
+- **F-018 (27-11-2026):** el registro de auditoría guarda el email del administrador que hizo cada cambio y se conserva 10 años. La política de privacidad lo menciona. El Impressum usa `impressumAddress` y `contactEmail` de la Configuración (`getSettings()`).

@@ -4,6 +4,7 @@ import path from "node:path";
 import { request, type APIRequestContext, type Page } from "@playwright/test";
 
 import { seedProduct, seedProductPaths } from "../scripts/seed-data";
+import { adminSession } from "./admin-session";
 import { expect, test, visit } from "./fixtures";
 
 const email = process.env.SEED_ADMIN_EMAIL;
@@ -76,11 +77,7 @@ async function save(page: Page): Promise<number> {
 }
 
 async function login(page: Page) {
-  const result = await api<{ token: string }>(page.request, "post", "/api/users/login", {
-    email,
-    password,
-  });
-  token = result.token;
+  token = await adminSession(page);
 }
 
 async function expectNotInStore(page: Page, url: string) {

@@ -72,6 +72,7 @@ export interface Config {
     categories: Category;
     media: Media;
     users: User;
+    'audit-log': AuditLog;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -88,6 +89,7 @@ export interface Config {
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'audit-log': AuditLogSelect<false> | AuditLogSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -97,8 +99,12 @@ export interface Config {
     defaultIDType: number;
   };
   fallbackLocale: ('false' | 'none' | 'null') | false | null | ('es' | 'en' | 'de') | ('es' | 'en' | 'de')[];
-  globals: {};
-  globalsSelect: {};
+  globals: {
+    settings: Setting;
+  };
+  globalsSelect: {
+    settings: SettingsSelect<false> | SettingsSelect<true>;
+  };
   locale: 'es' | 'en' | 'de';
   widgets: {
     collections: CollectionsWidget;
@@ -344,6 +350,35 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Quién cambió qué y cuándo. Solo lectura; se conserva 10 años.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log".
+ */
+export interface AuditLog {
+  id: number;
+  at: string;
+  /**
+   * Vacío = Sistema (seed, webhooks, tareas).
+   */
+  actorEmail?: string | null;
+  actorId?: number | null;
+  entity: 'products' | 'variants' | 'settings';
+  entityId?: string | null;
+  entityLabel?: string | null;
+  action: 'create' | 'update' | 'delete' | 'status';
+  locale?: string | null;
+  changes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -592,6 +627,21 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "audit-log_select".
+ */
+export interface AuditLogSelect<T extends boolean = true> {
+  at?: T;
+  actorEmail?: T;
+  actorId?: T;
+  entity?: T;
+  entityId?: T;
+  entityLabel?: T;
+  action?: T;
+  locale?: T;
+  changes?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -629,6 +679,71 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
   batch?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings".
+ */
+export interface Setting {
+  id: number;
+  storeName: string;
+  /**
+   * Obligatorio antes del lanzamiento.
+   */
+  contactEmail?: string | null;
+  /**
+   * Obligatoria antes del lanzamiento.
+   */
+  impressumAddress?: string | null;
+  /**
+   * Se avisa cuando una variante baja de estas unidades.
+   */
+  lowStockThreshold?: number | null;
+  /**
+   * Un lote pasa a Ofertas cuando le quedan estos días.
+   */
+  offerDaysBeforeExpiry?: number | null;
+  /**
+   * Se avisa de los lotes que caducan en estos días.
+   */
+  expiryWarningDays?: number | null;
+  /**
+   * Hasta 5. Si no hay ninguno, se usa el email de contacto.
+   */
+  alertEmails?:
+    | {
+        email: string;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Vacío = sin envío gratis.
+   */
+  freeShippingThreshold?: number | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "settings_select".
+ */
+export interface SettingsSelect<T extends boolean = true> {
+  storeName?: T;
+  contactEmail?: T;
+  impressumAddress?: T;
+  lowStockThreshold?: T;
+  offerDaysBeforeExpiry?: T;
+  expiryWarningDays?: T;
+  alertEmails?:
+    | T
+    | {
+        email?: T;
+        id?: T;
+      };
+  freeShippingThreshold?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
