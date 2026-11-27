@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobado (27-11-2026) por el usuario, decisiones como se propusieron |
+| Estado | Implementado (27-11-2026); aprobado el 27-11-2026 con D-1…D-4 como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-018-configuracion-auditoria` |
 
@@ -173,3 +173,12 @@ Ninguna.
 | Los avisos de error del global no se ven en el móvil (como en F-010) | Mismo patrón de error visible que `NativeSelect` |
 | Perder el registro si se pierde la base de datos (PITR de pocos días) | Exportación periódica fuera de Neon, anotada en F-072 |
 | Una feature futura olvida auditar su colección | Contrato escrito arriba y prueba de la lista de entidades; se revisa en cada plan |
+
+## Notas de la implementación (27-11-2026)
+- **Transacciones y `findByID`:** dentro de un hook, un `findByID` que no encuentra el documento lanza `NotFound` y Payload, al recoger el error, **cierra la transacción de la petición**: el borrado se deshacía y la fila de auditoría quedaba fuera de la transacción. La etiqueta del producto se busca con `find` (no lanza). Regla para las siguientes features: en hooks con `req`, nunca `findByID(...).catch()`; usar `find` con `where[id]`.
+- **`diffDocs`:** el documento raíz tiene `id` y fechas, igual que una relación poblada; se recorre aparte para no confundirlo con una relación. Se ignoran `globalType` y los campos `join` (`variants` del producto, opción `ignore`).
+- **Errores en el móvil:** Payload oculta todos los tooltips por debajo de 1024 px, también los de error de campo. `custom.scss` los muestra como texto bajo el campo en esas pantallas; vale para todos los formularios del panel.
+- **Pestañas:** las pestañas inactivas tenían opacidad 0,5 (contraste insuficiente). Se muestran con el color de texto secundario.
+- **Fecha del registro:** el selector de fecha de Payload deja sin etiqueta su campo y su botón; como el registro es de solo lectura, la fecha se muestra como texto (`ReadOnlyDate`).
+- **Bloqueo de edición:** `lockDocuments: false` en la Configuración y en la auditoría (2 administradores, gana el último guardado; la auditoría no se edita).
+- **E2E:** el administrador de prueba inicia sesión una sola vez (`e2e/admin-session.ts`, `globalSetup`). Varios inicios de sesión en paralelo del mismo usuario se pisaban la lista de sesiones de Payload y algún test acababa sin sesión (era la causa de fallos intermitentes en F-010/F-011).

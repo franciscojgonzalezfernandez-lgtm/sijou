@@ -34,3 +34,6 @@ El paso a producción del 1 de febrero de 2027.
 
 ## Dudas
 - Ninguna.
+
+## Notas de otras features
+- **F-018 (27-11-2026):** el registro de auditoría se conserva 10 años, pero el PITR de Neon solo cubre unos días. La puesta en producción incluye una exportación periódica de `audit_log` fuera de Neon. Además, `contactEmail` e `impressumAddress` de la Configuración tienen que estar rellenos antes del lanzamiento.

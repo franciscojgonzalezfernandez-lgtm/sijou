@@ -36,6 +36,7 @@ import {
 
 import { suggestSku } from "@/domain/products/sku";
 
+import { auditHooks } from "./audit";
 import { expireCatalog, slugField } from "./shared";
 
 // Accessible replacements for Payload's react-select widgets (constitution II).
@@ -223,6 +224,29 @@ const enforcePublishReadiness: CollectionBeforeChangeHook = async ({ data, origi
   });
 };
 
+/** F-018 CA-3: every create, edit, status change and delete, labelled by the Spanish name. */
+const audit = auditHooks({
+  entity: "products",
+  localized: true,
+  ignore: ["variants"],
+  label: async (doc, req) => {
+    if (req.locale === "es" && typeof doc.name === "string") return doc.name;
+    // `find`, not `findByID`: on a deleted product findByID throws, and Payload's error path
+    // kills the request's transaction, which would roll back the delete itself.
+    const { docs } = await req.payload.find({
+      collection: "products",
+      where: { id: { equals: doc.id } },
+      locale: "es",
+      depth: 0,
+      limit: 1,
+      pagination: false,
+      select: { name: true },
+      req,
+    });
+    return docs[0]?.name ?? (typeof doc.name === "string" ? doc.name : `#${String(doc.id)}`);
+  },
+});
+
 /** Products (F-010). Localized texts, lifecycle status and the publish rule. */
 export const Products: CollectionConfig = {
   slug: "products",
@@ -337,6 +361,15 @@ export const Products: CollectionConfig = {
     },
   ],
   fields: [
+    {
+      name: "auditHistory",
+      type: "ui",
+      admin: {
+        position: "sidebar",
+        custom: { entity: "products" },
+        components: { Field: "/components/admin/AuditHistoryLink#AuditHistoryLink" },
+      },
+    },
     {
       name: "publishChecklist",
       type: "ui",
@@ -545,7 +578,8 @@ export const Products: CollectionConfig = {
         }
         expireCatalog();
       },
+      audit.afterChange,
     ],
-    afterDelete: [() => expireCatalog()],
+    afterDelete: [() => expireCatalog(), audit.afterDelete],
   },
 };

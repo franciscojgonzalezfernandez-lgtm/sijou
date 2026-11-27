@@ -168,10 +168,11 @@ restock_subscription(customer_id, variant_id, notified_at?)
 store_credit_entry(id, customer_id, delta_chf, reason, order_id?, actor, created_at)   -- saldo = suma de movimientos; solo se añaden filas
 promotion(type{percent,fixed}, value, scope{product,category,collection}, scope_ids, starts_at, ends_at, active)
 discount_code(code, type, value, scope, max_uses, per_customer, first_order_only, expires_at)   -- esquema MVP, uso post-MVP
-shipping_rule(zone, countries[], min_subtotal, max_subtotal?, price_chf) · settings(key, value)
+shipping_rule(zone, countries[], min_subtotal, max_subtotal?, price_chf)
+settings   -- global de Payload (una fila tipada, F-018), no una tabla clave-valor; se lee con getSettings()
 page / post (+translation) · slug_redirect(locale, from, to)
 stripe_event(id PK) · email_outbox(id, template, to, locale, payload, status, attempts)
-audit_log(actor, entity, entity_id, action, diff, at)
+audit_log(at, actor_id?, actor_email?, entity, entity_id?, entity_label, action, locale?, changes jsonb)   -- solo inserción: un trigger rechaza UPDATE y DELETE (F-018)
 ```
 
 ## 6. Decisiones pendientes
