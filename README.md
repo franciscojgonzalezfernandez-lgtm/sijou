@@ -14,8 +14,14 @@ Trilingual storefront (EN · DE · ES) · Spanish admin panel · Prices in CHF �
 ![Vercel](https://img.shields.io/badge/Vercel-fra1-000?logo=vercel)
 ![Lighthouse](https://img.shields.io/badge/Lighthouse_(mobile)-%E2%89%A590_%C3%97_4-f44b21?logo=lighthouse&logoColor=white)
 ![WCAG](https://img.shields.io/badge/WCAG-2.2_AA-2e7d32)
+![Status](https://img.shields.io/badge/status-under_construction-f2a900)
+
+**[🌐 Live site →](https://sijou-nu.vercel.app)** &nbsp;·&nbsp; [/en](https://sijou-nu.vercel.app/en) · [/de](https://sijou-nu.vercel.app/de) · [/es](https://sijou-nu.vercel.app/es)
 
 </div>
+
+> [!NOTE]
+> 🚧 **Work in progress.** The shop is being built in the open and deployed continuously: every merged PR goes straight to the live site above. Expect placeholder content and features that are not there yet; checkout, accounts and the blog are coming before the February 2027 launch. Progress is tracked in the [backlog](specs/BACKLOG.md).
 
 ---
 
@@ -26,6 +32,7 @@ Trilingual storefront (EN · DE · ES) · Spanish admin panel · Prices in CHF �
 | **What** | A custom online shop: catalogue with variants, lot-based stock with expiry dates (FEFO), pre-orders, promotions, Stripe Checkout with TWINT, CMS pages and a blog. |
 | **Who** | One engineer, a real client, a fixed launch date. Claude Code as a pair programmer under strict human review. |
 | **Why it's interesting** | Every PR must pass **Lighthouse ≥ 90 in all four categories on mobile, in all three languages**, zero axe accessibility violations, unit + E2E tests for every acceptance criterion, and secret scanning — against a **real Vercel preview with its own database branch**. Nothing merges otherwise. |
+| **Live** | [sijou-nu.vercel.app](https://sijou-nu.vercel.app): production, updated on every merge |
 | **Progress** | 8 of ~45 features shipped (platform, i18n, design system, products, variants, categories, settings + audit log). See the [backlog](specs/BACKLOG.md). |
 | **Numbers** | 30+ merged PRs · 136 unit tests · 28 E2E scenarios × 3 devices · 4 required CI checks · 3 locales audited per page |
 
