@@ -10,6 +10,8 @@ import sharp from "sharp";
 import { AccessibleNameFeature } from "./components/admin/lexical-accessible-name/server";
 import { AuditLog } from "./collections/AuditLog";
 import { Categories } from "./collections/Categories";
+import { Lots } from "./collections/Lots";
+import { StockMovements } from "./collections/StockMovements";
 import { ProductCollections } from "./collections/ProductCollections";
 import { Media } from "./collections/Media";
 import { Products } from "./collections/Products";
@@ -48,7 +50,17 @@ export default buildConfig({
     defaultLocale: "es",
     fallback: false,
   },
-  collections: [Products, Variants, Categories, ProductCollections, Media, Users, AuditLog],
+  collections: [
+    Products,
+    Variants,
+    Lots,
+    StockMovements,
+    Categories,
+    ProductCollections,
+    Media,
+    Users,
+    AuditLog,
+  ],
   globals: [Settings],
   // AccessibleNameFeature: names the editable area after its field label (constitution II).
   editor: lexicalEditor({

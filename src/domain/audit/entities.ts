@@ -5,6 +5,7 @@
 export const AUDITED_ENTITIES = {
   products: "Producto",
   variants: "Variante",
+  lots: "Lote",
   settings: "Configuración",
 } as const;
 

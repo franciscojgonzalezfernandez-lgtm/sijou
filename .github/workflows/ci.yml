@@ -58,6 +58,8 @@ jobs:
           if q "UPDATE audit_log SET locale = 'es'"; then echo "UPDATE was allowed"; exit 1; fi
           if q "DELETE FROM audit_log"; then echo "DELETE was allowed"; exit 1; fi
           echo "audit_log rejects UPDATE and DELETE"
+      # F-013: row locks, constraints and the stock_movements trigger, on the migrated database.
+      - run: pnpm test:integration
       - name: Coverage summary
         if: always() && hashFiles('coverage/coverage-summary.json') != ''
         run: |

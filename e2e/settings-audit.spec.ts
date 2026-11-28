@@ -126,12 +126,12 @@ test.describe("F-018 settings and audit log", () => {
         // its own tab, right after the refused save (WebKit can drop a hidden tab's error).
         const refusedSave = async () => {
           // The form enables "Guardar" once it has registered the change.
-          await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+          await expect(page.getByRole("button", { name: "Guardar", exact: true })).toBeEnabled();
           const [refused] = await Promise.all([
             page.waitForResponse(
               (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
             ),
-            page.getByRole("button", { name: "Guardar" }).click(),
+            page.getByRole("button", { name: "Guardar", exact: true }).click(),
           ]);
           expect(refused.status()).toBe(400);
         };
@@ -158,7 +158,7 @@ test.describe("F-018 settings and audit log", () => {
           page.waitForResponse(
             (r) => r.request().method() === "POST" && r.url().includes("/api/globals/settings"),
           ),
-          page.getByRole("button", { name: "Guardar" }).click(),
+          page.getByRole("button", { name: "Guardar", exact: true }).click(),
         ]);
 
         const row = (await auditRows(page, { entity: "settings" })).find((r) =>
@@ -179,7 +179,7 @@ test.describe("F-018 settings and audit log", () => {
           .getByRole("row", { name: /lowStockThreshold/ });
         await expect(tableRow).toContainText(String(threshold));
         // CA-4: nothing to save or delete on a log row.
-        await expect(page.getByRole("button", { name: "Guardar" })).toHaveCount(0);
+        await expect(page.getByRole("button", { name: "Guardar", exact: true })).toHaveCount(0);
         await expect(page.getByRole("button", { name: /Eliminar/ })).toHaveCount(0);
       });
     });

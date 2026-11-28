@@ -71,7 +71,7 @@ async function save(page: Page): Promise<number> {
     page.waitForResponse(
       (r) => r.request().method() === "PATCH" && /\/api\/products\/\d+/.test(r.url()),
     ),
-    page.getByRole("button", { name: "Guardar" }).click(),
+    page.getByRole("button", { name: "Guardar", exact: true }).click(),
   ]);
   return response.status();
 }
@@ -128,7 +128,7 @@ test.describe("F-010 product lifecycle in the admin", () => {
         ready: hydrated,
       });
       await page.getByRole("textbox", { name: /^Nombre/ }).fill(names.es);
-      await page.getByRole("button", { name: "Guardar" }).click();
+      await page.getByRole("button", { name: "Guardar", exact: true }).click();
       await page.waitForURL(/\/admin\/collections\/products\/\d+/, { waitUntil: "commit" });
       id = /products\/(\d+)/.exec(page.url())?.[1] ?? "";
       expect(id).not.toBe("");

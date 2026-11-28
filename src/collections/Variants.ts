@@ -1,4 +1,5 @@
 import {
+  APIError,
   ValidationError,
   type CollectionBeforeChangeHook,
   type CollectionConfig,
@@ -18,8 +19,13 @@ import {
   variantMatchesOptions,
 } from "@/domain/products/variant-options";
 
+import { availableStock, zurichToday } from "@/domain/stock/lots";
+import { hasMovements, lotsByVariant } from "@/lib/stock";
+
 import { auditHooks } from "./audit";
 import { expireCatalog } from "./shared";
+
+export const HAS_STOCK_HISTORY = "Tiene historial de stock: desactívala en vez de borrarla.";
 
 const NATIVE_SELECT = "/components/admin/NativeSelect#NativeSelect";
 
@@ -121,7 +127,16 @@ export const Variants: CollectionConfig = {
   labels: { singular: "Variante", plural: "Variantes" },
   admin: {
     useAsTitle: "sku",
-    defaultColumns: ["sku", "product", "size", "scent", "color", "price", "active"],
+    defaultColumns: [
+      "sku",
+      "product",
+      "size",
+      "scent",
+      "color",
+      "price",
+      "stockAvailable",
+      "active",
+    ],
   },
   fields: [
     {
@@ -230,6 +245,24 @@ export const Variants: CollectionConfig = {
       ],
     },
     {
+      // F-013 CA-7: total, lots, history, and the forms to register and adjust stock.
+      name: "stock",
+      type: "ui",
+      admin: { components: { Field: "/components/admin/StockPanel#StockPanel" } },
+    },
+    {
+      // CA-2: filled in by afterOperation, for the list of variants.
+      name: "stockAvailable",
+      type: "number",
+      label: "Stock",
+      virtual: true,
+      admin: {
+        readOnly: true,
+        position: "sidebar",
+        description: "Unidades que se pueden vender ahora (lotes sin caducar).",
+      },
+    },
+    {
       name: "active",
       type: "checkbox",
       label: "Activa",
@@ -239,6 +272,34 @@ export const Variants: CollectionConfig = {
   ],
   hooks: {
     beforeChange: [enforceCombination],
+    // D-3: stock history must not lose its variant; deactivate it instead.
+    beforeDelete: [
+      async ({ id, req }) => {
+        if (await hasMovements(req.payload, [Number(id)])) {
+          throw new APIError(HAS_STOCK_HISTORY, 400, null, true);
+        }
+      },
+    ],
+    // CA-2: available stock for the list column, one query per page of variants.
+    afterOperation: [
+      async ({ operation, result: output, req }) => {
+        const result: unknown = output;
+        if (operation !== "find" && operation !== "findByID") return result;
+        const docs = (operation === "find" ? (result as { docs: unknown[] }).docs : [result]) as {
+          id?: unknown;
+          stockAvailable?: number;
+        }[];
+        const ids = docs.map((doc) => doc?.id).filter((id): id is number => typeof id === "number");
+        if (ids.length === 0) return result;
+        const lots = await lotsByVariant(req.payload, ids);
+        const today = zurichToday();
+        for (const doc of docs) {
+          if (typeof doc?.id === "number")
+            doc.stockAvailable = availableStock(lots.get(doc.id) ?? [], today);
+        }
+        return result;
+      },
+    ],
     afterChange: [() => expireCatalog(), audit.afterChange],
     // CA-5: a deleted variant leaves the gallery rows it was assigned to.
     afterDelete: [

@@ -69,6 +69,8 @@ export interface Config {
   collections: {
     products: Product;
     variants: Variant;
+    lots: Lot;
+    'stock-movements': StockMovement;
     categories: Category;
     'product-collections': ProductCollection;
     media: Media;
@@ -87,6 +89,8 @@ export interface Config {
   collectionsSelect: {
     products: ProductsSelect<false> | ProductsSelect<true>;
     variants: VariantsSelect<false> | VariantsSelect<true>;
+    lots: LotsSelect<false> | LotsSelect<true>;
+    'stock-movements': StockMovementsSelect<false> | StockMovementsSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     'product-collections': ProductCollectionsSelect<false> | ProductCollectionsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
@@ -365,11 +369,63 @@ export interface Variant {
   netQuantity?: number | null;
   netUnit?: ('ml' | 'g') | null;
   /**
+   * Unidades que se pueden vender ahora (lotes sin caducar).
+   */
+  stockAvailable?: number | null;
+  /**
    * Desactívala para dejar de venderla sin borrarla.
    */
   active?: boolean | null;
   updatedAt: string;
   createdAt: string;
+}
+/**
+ * Busca aquí un código de lote. Los lotes se registran y se ajustan desde la ficha de la variante.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lots".
+ */
+export interface Lot {
+  id: number;
+  variant: number | Variant;
+  code: string;
+  quantityInitial: number;
+  /**
+   * Cambia solo con un ajuste o una venta, desde la ficha de la variante.
+   */
+  quantityAvailable: number;
+  receivedAt: string;
+  /**
+   * Opcional. Se vende hasta ese día incluido.
+   */
+  expiresAt?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Todo lo que ha entrado y salido de cada lote. Solo lectura.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stock-movements".
+ */
+export interface StockMovement {
+  id: number;
+  at: string;
+  variantId: number;
+  variantSku: string;
+  lotId?: number | null;
+  lotCode?: string | null;
+  delta: number;
+  quantityAfter: number;
+  reason: 'receipt' | 'breakage' | 'gift' | 'correction' | 'other' | 'sale' | 'expiry';
+  refType: 'lot' | 'adjustment' | 'order' | 'expiry';
+  refId?: string | null;
+  comment?: string | null;
+  /**
+   * Vacío = Sistema (ventas, caducidades, seed).
+   */
+  actorEmail?: string | null;
+  actorId?: number | null;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -470,7 +526,7 @@ export interface AuditLog {
    */
   actorEmail?: string | null;
   actorId?: number | null;
-  entity: 'products' | 'variants' | 'settings';
+  entity: 'products' | 'variants' | 'lots' | 'settings';
   entityId?: string | null;
   entityLabel?: string | null;
   action: 'create' | 'update' | 'delete' | 'status';
@@ -516,6 +572,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'variants';
         value: number | Variant;
+      } | null)
+    | ({
+        relationTo: 'lots';
+        value: number | Lot;
       } | null)
     | ({
         relationTo: 'categories';
@@ -633,9 +693,43 @@ export interface VariantsSelect<T extends boolean = true> {
   weightGrams?: T;
   netQuantity?: T;
   netUnit?: T;
+  stockAvailable?: T;
   active?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "lots_select".
+ */
+export interface LotsSelect<T extends boolean = true> {
+  variant?: T;
+  code?: T;
+  quantityInitial?: T;
+  quantityAvailable?: T;
+  receivedAt?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "stock-movements_select".
+ */
+export interface StockMovementsSelect<T extends boolean = true> {
+  at?: T;
+  variantId?: T;
+  variantSku?: T;
+  lotId?: T;
+  lotCode?: T;
+  delta?: T;
+  quantityAfter?: T;
+  reason?: T;
+  refType?: T;
+  refId?: T;
+  comment?: T;
+  actorEmail?: T;
+  actorId?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

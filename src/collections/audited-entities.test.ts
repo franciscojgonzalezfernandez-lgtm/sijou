@@ -5,14 +5,16 @@ import { Settings } from "@/globals/Settings";
 
 import { auditedEntities } from "./audit";
 import { AuditLog } from "./AuditLog";
+import { Lots } from "./Lots";
 import { Products } from "./Products";
 import { Variants } from "./Variants";
 
 describe("audited entities (F-018 CA-3)", () => {
   it("every audited collection or global has a label in the audit log, and the other way round", () => {
-    expect([Products.slug, Variants.slug, Settings.slug]).toEqual([
+    expect([Products.slug, Variants.slug, Lots.slug, Settings.slug]).toEqual([
       "products",
       "variants",
+      "lots",
       "settings",
     ]);
     expect([...auditedEntities].sort()).toEqual(Object.keys(AUDITED_ENTITIES).sort());

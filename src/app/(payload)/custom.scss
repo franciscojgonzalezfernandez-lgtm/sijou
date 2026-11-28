@@ -350,3 +350,134 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+
+/* F-013: Stock block of a variant. Tables scroll inside their own box, never the page. */
+.stock-panel {
+  margin-block: var(--base) calc(var(--base) * 2);
+  padding: var(--base);
+  border: 1px solid var(--theme-elevation-150);
+  border-radius: var(--style-radius-m);
+  min-width: 0;
+
+  h3,
+  h4 {
+    margin-block: var(--base) calc(var(--base) / 2);
+  }
+
+  &__summary {
+    font-size: 1.125rem;
+  }
+
+  &__status:empty {
+    display: none;
+  }
+
+  &__status {
+    margin-block: calc(var(--base) / 2);
+    padding: calc(var(--base) / 2);
+    background: var(--theme-elevation-50);
+  }
+
+  &__scroll {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
+  &__scroll:focus-visible {
+    outline: 2px solid var(--theme-success-500);
+    outline-offset: 2px;
+  }
+
+  &__table {
+    border-collapse: collapse;
+    width: 100%;
+
+    caption {
+      text-align: start;
+      padding-block-end: calc(var(--base) / 4);
+    }
+
+    th,
+    td {
+      padding: calc(var(--base) / 4) calc(var(--base) / 2);
+      border-bottom: 1px solid var(--theme-elevation-150);
+      text-align: start;
+      white-space: nowrap;
+    }
+  }
+
+  &__expired {
+    color: var(--theme-error-650);
+  }
+
+  &__forms {
+    display: grid;
+    gap: var(--base);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr));
+    margin-block: var(--base);
+  }
+
+  fieldset {
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: var(--style-radius-s);
+    padding: var(--base);
+    min-width: 0;
+  }
+
+  legend {
+    font-weight: 600;
+    padding-inline: calc(var(--base) / 4);
+  }
+
+  &__filters {
+    display: grid;
+    gap: calc(var(--base) / 2);
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+    margin-block-end: var(--base);
+  }
+
+  &__field {
+    display: flex;
+    flex-direction: column;
+    gap: calc(var(--base) / 4);
+    margin-block-end: calc(var(--base) / 2);
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      min-height: 2.75rem;
+      padding: calc(var(--base) / 4) calc(var(--base) / 2);
+      border: 1px solid var(--theme-elevation-400);
+      border-radius: var(--style-radius-s);
+      background: var(--theme-input-bg);
+      color: var(--theme-elevation-800);
+      font: inherit;
+    }
+  }
+
+  &__field--error {
+    input,
+    select,
+    textarea {
+      border-color: var(--theme-error-650);
+    }
+  }
+
+  &__hint {
+    color: var(--theme-elevation-650);
+    margin: 0;
+  }
+
+  &__error {
+    color: var(--theme-error-650);
+    margin: 0;
+  }
+
+  &__pages {
+    display: flex;
+    align-items: center;
+    gap: var(--base);
+    flex-wrap: wrap;
+  }
+}

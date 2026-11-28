@@ -7,6 +7,8 @@ export default defineConfig({
   },
   test: {
     include: ["src/**/*.test.{ts,tsx}"],
+    // Postgres tests run on their own, after migrations (`pnpm test:integration`).
+    exclude: ["**/node_modules/**", "src/**/*.integration.test.ts"],
     environment: "node",
     // next-intl imports `next/server` without an extension; let Vite resolve it.
     server: { deps: { inline: ["next-intl"] } },
