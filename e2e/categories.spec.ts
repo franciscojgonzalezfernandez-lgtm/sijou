@@ -258,7 +258,7 @@ test.describe("F-012 categories and collections in the admin", () => {
         await expect(page.getByRole("combobox", { name: /Categoría superior/ })).toBeEnabled();
         await page.getByRole("textbox", { name: /^Nombre/ }).fill(rostro.name.es);
         await page.getByRole("combobox", { name: /^Estado/ }).selectOption("published");
-        await page.getByRole("button", { name: "Guardar" }).click();
+        await page.getByRole("button", { name: "Guardar", exact: true }).click();
         await expect(
           page.getByText(/No se puede publicar\. Falta en inglés: nombre, slug\./),
         ).toBeVisible();
@@ -267,7 +267,7 @@ test.describe("F-012 categories and collections in the admin", () => {
         await page.getByRole("combobox", { name: /^Estado/ }).selectOption("draft");
         await Promise.all([
           page.waitForURL(/\/admin\/collections\/categories\/\d+/),
-          page.getByRole("button", { name: "Guardar" }).click(),
+          page.getByRole("button", { name: "Guardar", exact: true }).click(),
         ]);
         rostroId = Number(/categories\/(\d+)/.exec(page.url())?.[1]);
         cleanup.push(() => call(request, "delete", `/api/categories/${rostroId}`));
@@ -423,7 +423,7 @@ test.describe("F-012 categories and collections in the admin", () => {
             (r) =>
               r.request().method() === "PATCH" && r.url().includes("/api/product-collections/"),
           ),
-          page.getByRole("button", { name: "Guardar" }).click(),
+          page.getByRole("button", { name: "Guardar", exact: true }).click(),
         ]);
         await expectInStore(page, `/es/colecciones/${favoritos.slug.es}`, async () => {
           await expect(productLinks(page)).toHaveText([seedProduct.name.es, `Bálsamo ${tag}`]);

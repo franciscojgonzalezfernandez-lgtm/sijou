@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Propuesto (27-11-2026), pendiente de aprobación (D-1…D-5) |
+| Estado | Implementado (28-11-2026); aprobado el 28-11-2026 con D-1…D-5 como se propusieron |
 | Spec | [spec.md](./spec.md) (aprobada el 23-11-2026) |
 | Rama | `feat/F-013-stock-lotes` |
 
@@ -135,3 +135,14 @@ Ninguna. Drizzle ya viene con `@payloadcms/db-postgres`.
 | Las cantidades se editan por la API saltándose la transacción | `access.update: false` en esos campos, `create: false` en la colección, y una prueba E2E que lo intenta por la API |
 | El trigger de inmutabilidad impide limpiar las bases de las E2E | Las E2E crean variantes nuevas con sufijo aleatorio y no borran nada, como `settings-audit.spec.ts` |
 | Hora de Zúrich en los límites de caducidad | Una sola función `zurichToday`, con pruebas en el cambio de horario |
+
+## Notas de implementación (28-11-2026)
+- **SQL explícito en vez de `payload.db.tables`:** `src/lib/stock.ts` escribe las sentencias con `sql` de Drizzle y los nombres de tabla y columna generados (`lots`, `stock_movements`). Las tablas del adaptador están tipadas como `any`, así que no aportaban comprobación de tipos; la prueba de integración es la que detecta un cambio de esquema.
+- **Columnas `numeric`:** Payload crea los campos `number` como `numeric`. La migración añade `CHECK` de entero y de mínimo (`quantity_available ≥ 0`, `quantity_initial ≥ 1`, `delta ≠ 0`), además de `UNIQUE (variant_id, code)`, el índice FEFO y el trigger de solo inserción.
+- **Caducidad:** se guarda a las 12:00 UTC del día elegido (el mismo día en Zúrich todo el año) con un campo propio `ZurichDay` (fecha nativa, con etiqueta). El selector de fechas de Payload no tiene etiqueta (constitución II).
+- **Columna "Stock" de la lista de variantes:** se rellena en `afterOperation` (`find`, `findByID`) con una sola consulta para todas las variantes de la página.
+- **Endpoints:** `POST /api/lots/receive`, `POST /api/lots/:id/adjust` y `GET /api/lots/of/:variant` (los lotes en orden FEFO para el bloque Stock).
+- **Bloque Stock:** vive dentro del formulario de Payload, así que no usa `<form>` propio: grupos `<fieldset>` con botones `type="button"`, y Enter en un campo ejecuta la acción del grupo en vez de guardar la variante. El foco va al primer campo con error después de pintar los errores (en WebKit no bastaba con `requestAnimationFrame`).
+- **Pruebas de integración:** `pnpm test:integration` (configuración propia `vitest.integration.config.ts`), en el job `quality` después de `pnpm migrate`. Quedan fuera de `pnpm test:unit`.
+- **E2E existentes:** el botón "Guardar ajuste" hacía ambiguo `getByRole("button", { name: "Guardar" })`; ahora se busca con `exact: true`.
+- **Borrado (D-3):** una variante con movimientos responde 400 "Tiene historial de stock: desactívala en vez de borrarla."; un producto con variantes con historial, "Sus variantes tienen historial de stock: archiva el producto en vez de borrarlo.".

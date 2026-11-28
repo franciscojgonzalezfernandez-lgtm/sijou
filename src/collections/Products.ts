@@ -10,6 +10,8 @@ import {
   type PayloadRequest,
 } from "payload";
 
+import { hasMovements } from "@/lib/stock";
+
 import { MAX_PHOTOS, TOO_MANY_PHOTOS } from "@/domain/products/gallery";
 import { isValidPrice } from "@/domain/products/price";
 import {
@@ -41,6 +43,9 @@ import { expireCatalog, slugField } from "./shared";
 
 // Accessible replacements for Payload's react-select widgets (constitution II).
 const NATIVE_SELECT = "/components/admin/NativeSelect#NativeSelect";
+
+export const PRODUCT_HAS_STOCK_HISTORY =
+  "Sus variantes tienen historial de stock: archiva el producto en vez de borrarlo.";
 
 type Localized = Partial<Record<string, unknown>>;
 type ProductData = Record<string, unknown>;
@@ -543,6 +548,23 @@ export const Products: CollectionConfig = {
     // CA-8: a product's variants go with it. F-033 blocks this once orders reference them.
     beforeDelete: [
       async ({ id, req }) => {
+        // F-013 D-3: stock history keeps its variants; archive the product instead.
+        const { docs } = await req.payload.find({
+          collection: "variants",
+          where: { product: { equals: id } },
+          depth: 0,
+          pagination: false,
+          select: {},
+          req,
+        });
+        if (
+          await hasMovements(
+            req.payload,
+            docs.map((variant) => variant.id),
+          )
+        ) {
+          throw new APIError(PRODUCT_HAS_STOCK_HISTORY, 400, null, true);
+        }
         req.context.deletingProduct = true;
         await req.payload.delete({
           collection: "variants",

@@ -68,13 +68,13 @@ const hydrated = (p: Page) =>
   p.getByRole("group", { name: "Categorías" }).getByRole("checkbox").first();
 
 async function savedStatus(page: Page, collection: "products" | "variants"): Promise<number> {
-  await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+  await expect(page.getByRole("button", { name: "Guardar", exact: true })).toBeEnabled();
   const [response] = await Promise.all([
     page.waitForResponse(
       (r) =>
         r.request().method() === "PATCH" && new RegExp(`/api/${collection}/\\d+`).test(r.url()),
     ),
-    page.getByRole("button", { name: "Guardar" }).click(),
+    page.getByRole("button", { name: "Guardar", exact: true }).click(),
   ]);
   return response.status();
 }
@@ -380,7 +380,7 @@ test.describe("F-011 variants and photos in the admin", () => {
         return;
       }
       await visit(page, "/admin/collections/media/create?locale=es", {
-        ready: (p) => p.getByRole("button", { name: "Guardar" }),
+        ready: (p) => p.getByRole("button", { name: "Guardar", exact: true }),
       });
       // The bar can come and go quickly: record that it appeared and every progress report.
       await page.evaluate(() => {
@@ -397,7 +397,7 @@ test.describe("F-011 variants and photos in the admin", () => {
         .locator('input[type="file"]')
         .first()
         .setInputFiles(path.join(import.meta.dirname, "fixtures/sample-product.jpg"));
-      await expect(page.getByRole("button", { name: "Guardar" })).toBeEnabled();
+      await expect(page.getByRole("button", { name: "Guardar", exact: true })).toBeEnabled();
       // Diagnostics for the direct-to-storage path: say why the save never lands.
       const notes: string[] = [];
       page.on("console", (m) => {
@@ -412,7 +412,7 @@ test.describe("F-011 variants and photos in the admin", () => {
         if (/blob|\/api\/media/.test(r.url()))
           notes.push(`${r.status()} ${r.request().method()} ${r.url()}`);
       });
-      await page.getByRole("button", { name: "Guardar" }).click();
+      await page.getByRole("button", { name: "Guardar", exact: true }).click();
       await page
         .waitForURL(/\/admin\/collections\/media\/\d+/, { waitUntil: "commit", timeout: 45_000 })
         .catch(async (error: unknown) => {

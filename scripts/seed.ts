@@ -7,6 +7,7 @@ import { fileURLToPath } from "node:url";
 import { getPayload, type Payload } from "payload";
 
 import { contentLocales } from "../src/domain/products/readiness";
+import { lotsOf, receiveLot } from "../src/lib/stock";
 import config from "../src/payload.config";
 import { SEED_SKU, seedProduct, seedTaxonomy } from "./seed-data";
 
@@ -38,6 +39,7 @@ if (existing.totalDocs === 0) {
 
 await seedCatalog(payload);
 await seedCategoriesAndCollections(payload);
+await seedLots(payload);
 
 process.exit(0);
 
@@ -250,4 +252,31 @@ async function seedCategoriesAndCollections(payload: Payload) {
     });
   }
   payload.logger.info("Seed: sample categories and collection ready");
+}
+
+/**
+ * F-013: two lots of the sample variant, one expiring in six months and one that does not
+ * expire, each with its receipt movement by the System. Skipped when the variant has lots.
+ */
+async function seedLots(payload: Payload) {
+  const [variant] = (
+    await payload.find({
+      collection: "variants",
+      where: { sku: { equals: SEED_SKU } },
+      limit: 1,
+      depth: 0,
+    })
+  ).docs;
+  if (!variant) return;
+  if ((await lotsOf(payload, variant.id)).length > 0) return;
+  const inSixMonths = new Date();
+  inSixMonths.setUTCMonth(inSixMonths.getUTCMonth() + 6);
+  await receiveLot(payload, null, {
+    variantId: variant.id,
+    code: "SEED-A",
+    quantity: 20,
+    expiresAt: inSixMonths.toISOString().slice(0, 10),
+  });
+  await receiveLot(payload, null, { variantId: variant.id, code: "SEED-B", quantity: 10 });
+  payload.logger.info("Seed: registered 2 lots of the sample variant");
 }

@@ -2,7 +2,7 @@
 
 | Campo | Valor |
 |---|---|
-| Estado | Aprobada (23-11-2026) |
+| Estado | Hecha (28-11-2026) |
 | Prioridad | P0 |
 | Requisitos PRD | RF-STK-01, 02, 05, 06, 08 |
 | Depende de | F-011 |
