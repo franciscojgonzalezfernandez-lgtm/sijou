@@ -61,7 +61,7 @@ Fuente: [PRD](../docs/PRD.md) · [Arquitectura](../docs/ARCHITECTURE.md) · Proc
 
 | ID | Feature | PRD | Depende de | Prio | Estado |
 |---|---|---|---|---|---|
-| [F-020](./F-020-estructura-publica/spec.md) | **Estructura pública**: cabecera, pie, navegación por categorías, selector de idioma, 404 y página de error por idioma | RF-NAV, RF-I18N | F-003, F-004 | P0 | 📝 |
+| [F-020](./F-020-estructura-publica/spec.md) | **Estructura pública**: cabecera, pie, navegación por categorías, selector de idioma, 404 y página de error por idioma | RF-NAV, RF-I18N | F-003, F-004 | P0 | 📐 |
 | [F-021](./F-021-listados/spec.md) | **Listados** de categoría y colección (orden por defecto según TA-11), estados de stock en la tarjeta | RF-NAV-02/03/04 | F-012, F-020 | P0 | 📝 |
 | [F-022](./F-022-ficha-producto/spec.md) | **Ficha de producto**: selector de variantes, galería con zoom, "Solo quedan X" (≤5), "Agotado", precio de promoción, precio por unidad | RF-CAT-05/09/10, L-05 | F-011, F-017, F-020 | P0 | 📝 |
 | [F-023](./F-023-busqueda/spec.md) | **Búsqueda** tolerante a errores en el idioma activo (Postgres FTS + trigram) | RF-NAV-05 | F-010 | P0 | 📝 |
